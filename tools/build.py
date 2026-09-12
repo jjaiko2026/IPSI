@@ -30,8 +30,11 @@ def main():
         gy = read(os.path.join(d, "입시결과.json")) or {}
         jh = mo.get("전형") or []
         gs = gy.get("결과") or []
-        wonmun = len(glob.glob(os.path.join(d, "원문", "*")))
+        wonmun = len(glob.glob(os.path.join(d, "원문", "*.pdf")))
         chuchul = len(glob.glob(os.path.join(d, "추출", "*")))
+        clue = read(os.path.join(d, "단서.json")) or {}
+        scanned = len(clue.get("원문") or [])
+        no_text = sum(1 for o in (clue.get("원문") or []) if o.get("텍스트없음"))
         if jh or gs:
             bundle.append({
                 "대학명": mo.get("대학명") or name,
@@ -45,6 +48,7 @@ def main():
             "대학명": name, "지역": mo.get("지역") or gy.get("지역") or "",
             "폴더": os.path.relpath(d, os.path.dirname(ROOT)).replace(os.sep, "/"),
             "전형수": len(jh), "결과수": len(gs), "원문": wonmun, "추출": chuchul,
+            "읽은원문": scanned, "글자없는스캔본": no_text,
             "확인완료": sum(1 for x in jh if x.get("확인") == "확인됨"),
         })
 
@@ -60,6 +64,10 @@ def main():
     print("bundle.json: 대학 %d · 전형 %d · 입시결과 %d"
           % (len(bundle), tot, sum(x["결과수"] for x in index)))
     print("확인 완료 전형 %d / %d" % (done, tot))
+    scanned = sum(x["읽은원문"] for x in index)
+    blank = sum(x["글자없는스캔본"] for x in index)
+    print("텍스트를 푼 원문 %d건%s" % (scanned,
+          " (글자가 없는 스캔본 %d건은 확인 필요)" % blank if blank else ""))
 
 if __name__ == "__main__":
     main()

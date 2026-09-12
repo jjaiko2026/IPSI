@@ -243,6 +243,18 @@ code.path{font-family:var(--mono); font-size:12px; background:var(--surface-2); 
 .jrow .j-name{font-weight:500; font-size:14px}
 .jrow .j-meta{font-size:12px; color:var(--muted); font-family:var(--mono)}
 .tagrow{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.clue{padding:10px 14px; border-bottom:1px solid var(--rule)}
+.clue:last-child{border-bottom:0}
+.clue .cat{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.clue .pg{font-family:var(--mono); font-size:11px; color:var(--fit); font-weight:600; margin-left:6px}
+.clue p{margin:4px 0 0; font-size:13px; line-height:1.65; color:var(--ink-2); white-space:pre-wrap;
+  max-height:112px; overflow:auto; background:var(--surface-2); padding:8px 10px; border:1px solid var(--rule)}
+.clue mark{background:color-mix(in srgb,var(--fit) 26%,transparent); color:inherit; padding:0 2px}
+.numstrip{display:flex; gap:6px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--rule)}
+.numstrip b{font-family:var(--mono); font-size:12px; font-weight:600; background:var(--surface-2);
+  border:1px solid var(--rule); padding:2px 7px}
+.bar{height:4px; background:var(--sunken); border:1px solid var(--rule); margin-top:10px; overflow:hidden}
+.bar i{display:block; height:100%; background:var(--fit); transition:width .2s}
 /* ── misc ─────────────────────────────────── */
 .banner{
   display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
@@ -371,17 +383,17 @@ footer.page{border-top:1px solid var(--rule); margin-top:34px; padding-top:18px}
 <section class="panel" id="p-data" role="tabpanel" aria-labelledby="tab-data" hidden>
   <div class="sheet">
     <header><h2>대학 전형 자료 불러오기</h2></header>
-    <p class="note">대학 하나에 폴더 하나입니다. 저장소의 <code class="path">data/대학/&lt;대학명&gt;/</code> 안에 <code class="path">모집요강.json</code>과 <code class="path">입시결과.json</code>을 채워 넣고, 그 폴더나 파일을 여기에 떨어뜨리면 전형 목록이 뜹니다. <code class="path">data/bundle.json</code> 하나만 넣어도 전체가 들어옵니다.</p>
+    <p class="note">대학 하나에 폴더 하나입니다. <strong>모집요강 · 입시결과 PDF를 그대로 넣으면</strong> 페이지가 열어서 반영비율 · 등급환산 · 수능최저 · 합격선이 적힌 대목을 쪽수와 함께 찾아 줍니다. 값을 확인해 <code class="path">모집요강.json</code>에 적어 두면 다음부터는 그 JSON만 넣으면 전형 목록이 바로 뜹니다.</p>
     <div class="drop" id="drop">
-      <strong>파일이나 폴더를 여기에 끌어다 놓으세요</strong>
-      <span class="hint">모집요강.json · 입시결과.json · bundle.json · 대학 폴더 · data/대학 폴더 전체</span>
+      <strong>PDF · 폴더 · JSON을 여기에 끌어다 놓으세요</strong>
+      <span class="hint">모집요강 PDF · 입시결과 PDF · 모집요강.json · 입시결과.json · 단서.json · bundle.json · 대학 폴더 통째로</span>
       <div class="row" style="justify-content:center; margin-top:12px">
         <button class="btn" id="pick-folder">폴더 불러오기</button>
         <button class="btn ghost" id="pick-files">파일 불러오기</button>
         <button class="btn ghost" id="paste-open">JSON 붙여넣기</button>
       </div>
       <input type="file" id="in-folder" webkitdirectory directory multiple hidden>
-      <input type="file" id="in-files" accept="application/json,.json" multiple hidden>
+      <input type="file" id="in-files" accept=".pdf,.json,.txt,application/pdf,application/json,text/plain" multiple hidden>
     </div>
     <div id="paste-box" hidden style="margin-top:14px">
       <label class="field"><span>모집요강.json · 입시결과.json · bundle.json 내용</span>
@@ -390,6 +402,18 @@ footer.page{border-top:1px solid var(--rule); margin-top:34px; padding-top:18px}
     </div>
     <p class="hint" id="load-log" style="margin-top:12px"></p>
     <div class="stats" id="data-stats"></div>
+  </div>
+
+  <div class="sheet" id="clue-sheet" hidden>
+    <header>
+      <h2>원문에서 찾은 대목</h2>
+      <div class="row" style="gap:6px">
+        <input type="search" id="clue-find" placeholder="원문 전체에서 낱말 찾기" style="width:230px">
+        <button class="btn ghost tiny" id="clue-reset">원문 비우기</button>
+      </div>
+    </header>
+    <p class="note">모집요강 표는 대학마다 생김새가 달라 값을 자동으로 확정하지 않습니다. <strong>어디를 봐야 하는지까지만</strong> 좁혀 드리니, 쪽수를 보고 원문에서 확인한 값을 전형 카드에 적으세요.</p>
+    <div id="clue-list"></div>
   </div>
 
   <div class="sheet">
@@ -989,6 +1013,201 @@ function renderMockChart(){
 let DATA = {};            // 대학명 -> {region, jh:[], res:[], src:Set}
 let dataLoaded = false;
 
+const CLUE_CATS = [
+  ["반영비율", /전형요소별\s*배점|전형요소\s*및\s*반영|반영\s*비율|일괄합산|단계별\s*전형|사정단계/],
+  ["교과반영", /교과\s*성적\s*반영|학생부\s*반영|등급\s*환산|환산\s*점수|반영\s*교과|학년별\s*반영|이수\s*단위|석차등급/],
+  ["수능최저", /수능\s*최저|최저학력기준|등급\s*합/],
+  ["수능반영", /영역별\s*반영|수능\s*반영|백분위|표준점수|변환점수/],
+  ["실기", /실기고사|실기\s*종목|실기\s*배점|실기\s*평가/],
+  ["입시결과", /입시\s*결과|입학\s*결과|합격자\s*성적|등록자\s*성적|경쟁률|충원|추가\s*합격/]
+];
+const CLUE_MAX = 8, CLUE_WIN = 240;
+let CLUES = [];           // {uni, file, pageCount, cats:{}, nums:{}, pages:[] | null}
+let pdfLib = null, pdfLoading = null;
+
+function loadPdfLib(){
+  if(pdfLib) return Promise.resolve(pdfLib);
+  if(pdfLoading) return pdfLoading;
+  const base = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  const add = src => new Promise((ok, no) => {
+    const t = document.createElement("script");
+    t.src = src; t.onload = ok; t.onerror = () => no(new Error(src));
+    document.head.appendChild(t);
+  });
+  pdfLoading = add(base + "pdf.min.js")
+    .then(() => add(base + "pdf.worker.min.js"))
+    .then(() => {
+      const lib = window.pdfjsLib;
+      if(!lib) throw new Error("pdfjsLib 없음");
+      try{ lib.GlobalWorkerOptions.workerSrc = base + "pdf.worker.min.js"; }catch(e){}
+      pdfLib = lib; return lib;
+    })
+    .catch(e => { pdfLoading = null; throw e; });
+  return pdfLoading;
+}
+
+function clueScore(t){
+  return 3*(t.match(/\d{1,3}\s*%/g)||[]).length + 2*(t.match(/점/g)||[]).length
+       + Math.floor((t.match(/\d/g)||[]).length/4);
+}
+function clueScan(pages){
+  const cats = {}, used = new Set();
+  CLUE_CATS.forEach(([name, rx]) => {
+    const hits = [];
+    for(let i = 0; i < pages.length && hits.length < CLUE_MAX; i++){
+      const re = new RegExp(rx.source, "g");
+      let m;
+      while((m = re.exec(pages[i])) && hits.length < CLUE_MAX){
+        const a = Math.max(0, m.index - Math.floor(CLUE_WIN/3));
+        const b = Math.min(pages[i].length, m.index + m[0].length + CLUE_WIN);
+        const t = pages[i].slice(a, b).replace(/[ \t 　]+/g, " ").trim();
+        const key = t.slice(0, 60);
+        if(used.has(key)) continue;
+        used.add(key);
+        hits.push({p:i+1, text:t});
+      }
+    }
+    if(hits.length){
+      hits.sort((a,b) => clueScore(b.text) - clueScore(a.text));
+      cats[name] = hits;
+    }
+  });
+  return cats;
+}
+function clueNums(whole){
+  const pct = [...new Set((whole.match(/\d{1,3}\s*%/g) || [])
+    .map(x => parseInt(x, 10)).filter(n => n > 0 && n <= 100))].sort((a,b)=>a-b).slice(0,40);
+  const cj = [], seen = new Set();
+  const re = /(\d)\s*개\s*영역\s*(?:등급\s*)?합\s*(\d{1,2})/g;
+  let m;
+  while((m = re.exec(whole))){
+    const k = m[1] + "-" + m[2];
+    if(seen.has(k)) continue;
+    seen.add(k); cj.push({n:+m[1], sum:+m[2]});
+  }
+  return {pct, cj: cj.slice(0,12)};
+}
+function uniFromName(fn){
+  let b = fn.replace(/\.(pdf|txt|json)$/i, "").replace(/^(decoded_|snippet_|tmp_)/, "");
+  b = b.replace(/_20\d\d.*$/, "").replace(/[_\s]*\[.*$/, "").trim().replace(/^_+|_+$/g, "");
+  return b.replace(/_국립$/, "").trim();
+}
+
+async function readPdf(file, onStep){
+  const lib = await loadPdfLib();
+  const buf = await file.arrayBuffer();
+  const doc = await lib.getDocument({data:new Uint8Array(buf)}).promise;
+  const pages = [];
+  for(let i = 1; i <= doc.numPages; i++){
+    const pg = await doc.getPage(i);
+    const c = await pg.getTextContent();
+    pages.push(c.items.map(it => it.str).join(" "));
+    if(onStep && i % 5 === 0) onStep(i, doc.numPages);
+  }
+  try{ doc.destroy(); }catch(e){}
+  return pages;
+}
+function addClue(uni, file, pages){
+  const whole = pages.join("\n");
+  const rec = {uni, file, pageCount:pages.length, cats:clueScan(pages), nums:clueNums(whole), pages};
+  CLUES = CLUES.filter(c => !(c.uni === uni && c.file === file));
+  CLUES.push(rec);
+  return rec;
+}
+function addClueJson(obj){
+  const uni = obj["대학명"] || "";
+  (obj["원문"] || []).forEach(o => {
+    const cats = {};
+    Object.keys(o["단서"] || {}).forEach(k => {
+      cats[k] = (o["단서"][k] || []).map(x => ({p:x["쪽"], text:x["발췌"]}));
+    });
+    const nums = {pct:(o["숫자"] && o["숫자"]["등장한_비율"]) || [],
+                  cj:((o["숫자"] && o["숫자"]["등급합_조건"]) || []).map(c => ({n:c["영역수"], sum:c["등급합"]}))};
+    CLUES = CLUES.filter(c => !(c.uni === uni && c.file === o["파일"]));
+    CLUES.push({uni, file:o["파일"] || "", pageCount:o["쪽수"] || 0, cats, nums, pages:null});
+  });
+}
+
+function renderClues(){
+  const sheet = $("#clue-sheet"), list = $("#clue-list");
+  if(!sheet) return;
+  sheet.hidden = !CLUES.length;
+  if(!CLUES.length) return;
+  const q = ($("#clue-find").value || "").trim();
+  list.innerHTML = "";
+  CLUES.slice().sort((a,b) => (a.uni||"").localeCompare(b.uni||"","ko")).forEach(c => {
+    const d = el("details","uni");
+    const cats = Object.keys(c.cats);
+    const sm = el("summary");
+    sm.innerHTML = '<span style="flex:1 1 auto">'+esc(c.uni || c.file)+
+      ' <span class="hint" style="font-weight:400">'+esc(c.file)+' · '+c.pageCount+'쪽</span></span>'+
+      cats.map(k => '<span class="chip plain">'+esc(k)+' '+c.cats[k].length+'</span>').join("");
+    d.appendChild(sm);
+
+    if(c.nums.pct.length || c.nums.cj.length){
+      const ns = el("div","numstrip");
+      ns.innerHTML = '<span class="hint" style="align-self:center">원문에 나온 값</span>' +
+        c.nums.cj.map(x => '<b>'+x.n+'개 영역 등급합 '+x.sum+'</b>').join("") +
+        c.nums.pct.slice(0,18).map(x => '<b>'+x+'%</b>').join("");
+      d.appendChild(ns);
+    }
+
+    if(q && c.pages){
+      const hits = [];
+      c.pages.forEach((t, i) => {
+        let from = 0, at;
+        while((at = t.indexOf(q, from)) >= 0 && hits.length < 20){
+          hits.push({p:i+1, text:t.slice(Math.max(0,at-120), at+q.length+200).replace(/[ \t 　]+/g," ").trim()});
+          from = at + q.length;
+        }
+      });
+      const box = el("div","clue");
+      box.innerHTML = '<span class="cat">“'+esc(q)+'” 찾기</span><span class="pg">'+hits.length+'곳</span>';
+      hits.forEach(h => {
+        const pp = el("p");
+        pp.innerHTML = '<span class="pg">'+h.p+'쪽</span> ' + esc(h.text).replace(
+          new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g"), '<mark>'+esc(q)+'</mark>');
+        box.appendChild(pp);
+      });
+      if(!hits.length) box.appendChild(el("p",null,"이 원문에는 없습니다."));
+      d.appendChild(box);
+      d.open = true;
+    }
+
+    cats.forEach(k => {
+      const box = el("div","clue");
+      const head = el("div");
+      head.innerHTML = '<span class="cat">'+esc(k)+'</span>';
+      box.appendChild(head);
+      c.cats[k].forEach(h => {
+        const pp = el("p");
+        pp.innerHTML = '<span class="pg">'+h.p+'쪽</span> ' + esc(h.text);
+        box.appendChild(pp);
+      });
+      d.appendChild(box);
+    });
+
+    const act = el("div","jrow");
+    const mk = el("button","btn tiny","이 대학 전형 카드 만들기");
+    mk.onclick = () => {
+      const hit = UNIS.find(x => x[0] === c.uni);
+      const lines = ["원문: " + c.file + " (" + c.pageCount + "쪽)"];
+      ["반영비율","수능최저","교과반영"].forEach(k => {
+        if(c.cats[k] && c.cats[k].length) lines.push(k + " → " + c.cats[k].slice(0,3).map(h => h.p + "쪽").join(", "));
+      });
+      if(c.nums.cj.length) lines.push("원문 등급합 조건: " + c.nums.cj.map(x => x.n+"개 합 "+x.sum).join(" / "));
+      S.targets.push(mkTarget({univ:c.uni, region: hit ? hit[1] : "", memo:lines.join("\n")}));
+      if(S.isExample) S.isExample = false;
+      commit();
+      document.querySelector('#tabs button[aria-controls="p-target"]').click();
+    };
+    act.innerHTML = '<div class="j-main"><div class="j-meta">확인한 값을 적을 빈 카드를 만들고, 위 쪽수를 메모에 넣어 둡니다.</div></div>';
+    act.appendChild(mk);
+    d.appendChild(act);
+    list.appendChild(d);
+  });
+}
+
 function ingest(obj, src, log){
   if(!obj || typeof obj !== "object") return;
   if(Array.isArray(obj)){ obj.forEach(o => ingest(o, src, log)); return; }
@@ -1014,34 +1233,80 @@ function ingest(obj, src, log){
   log.uni.add(name);
 }
 
-function readFiles(files, src){
-  const json = [...files].filter(f => /\.json$/i.test(f.name));
-  const skipped = files.length - json.length;
-  if(!json.length){
-    setLog("JSON 파일을 찾지 못했습니다. 모집요강.json · 입시결과.json · bundle.json 을 넣어 주세요." +
-           (skipped ? " (" + skipped + "개 파일은 JSON이 아니라 건너뜀)" : ""), true);
+async function readFiles(files, src){
+  const all = [...files];
+  const json = all.filter(f => /\.json$/i.test(f.name));
+  const pdf  = all.filter(f => /\.pdf$/i.test(f.name));
+  const txt  = all.filter(f => /\.txt$/i.test(f.name));
+  const other = all.length - json.length - pdf.length - txt.length;
+  if(!json.length && !pdf.length && !txt.length){
+    setLog("읽을 수 있는 파일이 없습니다. PDF · JSON · TXT 를 넣어 주세요." +
+           (other ? " (" + other + "개 건너뜀)" : ""), true);
     return;
   }
-  const log = {uni:new Set(), jh:0, res:0, bad:[]};
-  let left = json.length;
-  json.forEach(f => {
-    const rd = new FileReader();
-    rd.onload = () => {
-      try{ ingest(JSON.parse(rd.result), src || f.name, log); }
-      catch(e){ log.bad.push(f.name); }
-      if(--left === 0) doneLoad(log, skipped);
-    };
-    rd.onerror = () => { log.bad.push(f.name); if(--left === 0) doneLoad(log, skipped); };
-    rd.readAsText(f);
-  });
+  const log = {uni:new Set(), jh:0, res:0, bad:[], pdf:0, clue:0};
+
+  for(const f of json){
+    try{
+      const o = JSON.parse(await f.text());
+      if(o && Array.isArray(o["원문"])){ addClueJson(o); log.clue++; log.uni.add(o["대학명"]||f.name); }
+      else ingest(o, src || f.name, log);
+    }catch(e){ log.bad.push(f.name); }
+  }
+  for(const f of txt){
+    try{
+      const raw = await f.text();
+      const pages = raw.split(/\n=====\s*\d+쪽\s*=====\n/);
+      addClue(uniFromName(f.name), f.name, pages.length > 1 ? pages.slice(1) : [raw]);
+      log.clue++; log.uni.add(uniFromName(f.name));
+    }catch(e){ log.bad.push(f.name); }
+  }
+  if(pdf.length){
+    setProgress(0, pdf.length, "PDF를 읽는 중");
+    let lib = true;
+    try{ await loadPdfLib(); }catch(e){ lib = false; }
+    if(!lib){
+      setLog("PDF 읽기 도구를 불러오지 못했습니다. 네트워크가 막혀 있으면 저장소에서 " +
+             "python3 tools/pdf_scan.py 를 돌린 뒤 만들어지는 단서.json 이나 원문 .txt 를 넣어 주세요.", true);
+      clearProgress();
+    } else {
+      for(let i = 0; i < pdf.length; i++){
+        const f = pdf[i];
+        setProgress(i, pdf.length, f.name);
+        try{
+          const pages = await readPdf(f, (n, t) => setProgress(i + n/t, pdf.length, f.name + " " + n + "/" + t + "쪽"));
+          const rec = addClue(uniFromName(f.name), f.name, pages);
+          if(rec.pageCount && pages.join("").trim().length < 200) log.bad.push(f.name + " (글자 없는 스캔본)");
+          else { log.pdf++; log.clue++; log.uni.add(rec.uni); }
+        }catch(e){ log.bad.push(f.name); }
+      }
+      clearProgress();
+    }
+  }
+  doneLoad(log, other);
 }
+function setProgress(done, total, label){
+  const e = $("#load-log"); if(!e) return;
+  const pct = Math.min(100, Math.round(done/total*100));
+  e.innerHTML = esc(label) + " — " + pct + '%<span class="bar"><i style="width:'+pct+'%"></i></span>';
+  e.style.color = "var(--muted)";
+}
+function clearProgress(){ const e = $("#load-log"); if(e) e.innerHTML = ""; }
+
 function doneLoad(log, skipped){
   dataLoaded = true;
-  let msg = log.uni.size + "개 대학 · 전형 " + log.jh + "개 · 입시결과 " + log.res + "개를 읽었습니다.";
-  if(skipped) msg += " JSON이 아닌 파일 " + skipped + "개는 건너뛰었습니다.";
-  if(log.bad.length) msg += " 읽지 못한 파일: " + log.bad.slice(0,3).join(", ") + (log.bad.length>3 ? " 외 "+(log.bad.length-3)+"개" : "") + ".";
+  const bits = [];
+  if(log.jh) bits.push("전형 " + log.jh + "개");
+  if(log.res) bits.push("입시결과 " + log.res + "개");
+  if(log.pdf) bits.push("PDF " + log.pdf + "건");
+  if(log.clue && !log.pdf) bits.push("원문 " + log.clue + "건");
+  let msg = log.uni.size + "개 대학 — " + (bits.join(" · ") || "새로 읽은 내용 없음") + ".";
+  if(skipped) msg += " 읽을 수 없는 파일 " + skipped + "개는 건너뛰었습니다.";
+  if(log.bad.length) msg += " 읽지 못한 파일: " + log.bad.slice(0,3).join(", ") +
+    (log.bad.length > 3 ? " 외 " + (log.bad.length-3) + "개" : "") + ".";
   setLog(msg, !log.uni.size);
   renderData();
+  renderClues();
 }
 function setLog(t, warn){
   const e = $("#load-log"); if(!e) return;
@@ -1624,6 +1889,7 @@ function renderAll(){
     renderSubjBar();
     renderMockChart();
     renderData();
+    renderClues();
     renderTargets();
     renderPosition();
     renderLevers();
@@ -1693,6 +1959,11 @@ function bind(){
     $("#paste-json").value = ""; $("#paste-box").hidden = true;
   };
   $("#data-search").oninput = renderData;
+  $("#clue-find").oninput = renderClues;
+  $("#clue-reset").onclick = () => {
+    if(!confirm("읽어 둔 원문 내용을 비울까요? 담아둔 지원 후보는 그대로 남습니다.")) return;
+    CLUES = []; renderClues(); setLog("원문을 비웠습니다.", false);
+  };
   $("#data-reset").onclick = () => {
     if(!confirm("불러온 대학 자료를 모두 비울까요? 이미 담아둔 지원 후보는 그대로 남습니다.")) return;
     DATA = {}; dataLoaded = false;
