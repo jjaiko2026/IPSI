@@ -1,0 +1,1509 @@
+<title>체대입시 전략판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#EFF1EE; --surface:#FBFCFA; --surface-2:#F4F6F3; --sunken:#E5E9E4;
+  --ink:#141A1E; --ink-2:#3C474D; --muted:#5A666E; --faint:#8B969C;
+  --rule:#D5DAD4; --rule-strong:#B6BEB5;
+  --accent:#1E2A33; --accent-soft:#E2E7E1;
+  --ok:#1A6E4E; --fit:#1F6FB2; --reach:#8F5E0E; --far:#A8322A;
+  --ok-bg:#E4EFE9; --fit-bg:#E3EDF7; --reach-bg:#F4EBDA; --far-bg:#F6E4E1;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --shadow:0 1px 2px rgba(20,26,30,.06);
+  --display:"Hahmlet",'Nanum Myeongjo',"Apple SD Gothic Neo",serif;
+  --body:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","D2Coding",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#10161A; --surface:#161D22; --surface-2:#1B2429; --sunken:#0C1114;
+    --ink:#E6EBE8; --ink-2:#C2CBCE; --muted:#93A1A9; --faint:#6C7A82;
+    --rule:#26323A; --rule-strong:#3D4C55;
+    --accent:#E6EBE8; --accent-soft:#222D34;
+    --ok:#4FB489; --fit:#62A6E0; --reach:#D6A548; --far:#E8756A;
+    --ok-bg:#16302A; --fit-bg:#152836; --reach-bg:#2E2717; --far-bg:#33201E;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#10161A; --surface:#161D22; --surface-2:#1B2429; --sunken:#0C1114;
+  --ink:#E6EBE8; --ink-2:#C2CBCE; --muted:#93A1A9; --faint:#6C7A82;
+  --rule:#26323A; --rule-strong:#3D4C55;
+  --accent:#E6EBE8; --accent-soft:#222D34;
+  --ok:#4FB489; --fit:#62A6E0; --reach:#D6A548; --far:#E8756A;
+  --ok-bg:#16302A; --fit-bg:#152836; --reach-bg:#2E2717; --far-bg:#33201E;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-weight:400; font-size:15px; line-height:1.6;
+  padding-inline:clamp(16px,4vw,44px); padding-block:0 72px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1100px; margin:0 auto}
+h1,h2,h3{margin:0; text-wrap:balance; font-family:var(--display); font-weight:600; letter-spacing:-.01em}
+a{color:inherit}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--fit); outline-offset:2px; border-radius:2px}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* ── masthead ─────────────────────────────── */
+.masthead{
+  display:flex; flex-wrap:wrap; gap:24px; align-items:flex-end; justify-content:space-between;
+  padding-block:34px 22px; border-bottom:2px solid var(--ink);
+}
+.eyebrow{
+  font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+  font-weight:500; margin:0 0 6px;
+}
+.masthead h1{font-size:clamp(28px,4.4vw,40px); font-weight:800; line-height:1.05}
+.masthead .sub{color:var(--muted); font-size:13.5px; margin-top:8px}
+.ddays{display:flex; gap:10px; flex-wrap:wrap}
+.dday{
+  border:1px solid var(--rule-strong); background:var(--surface); padding:9px 13px 10px;
+  min-width:112px;
+}
+.dday .k{font-size:10.5px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase}
+.dday .v{font-family:var(--mono); font-size:21px; font-weight:600; line-height:1.2; display:block}
+.dday .d{font-size:11px; color:var(--faint); font-family:var(--mono)}
+
+/* ── tabs ─────────────────────────────────── */
+.tabs{display:flex; gap:2px; flex-wrap:wrap; border-bottom:1px solid var(--rule); margin-bottom:26px; position:sticky; top:0; background:var(--ground); z-index:20}
+.tabs button{
+  background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px;
+  padding:13px 15px; cursor:pointer; color:var(--muted); font-weight:500; font-size:14px;
+}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--ink); font-weight:600}
+.tabs .count{font-family:var(--mono); font-size:11px; color:var(--faint); margin-left:5px}
+.panel[hidden]{display:none}
+
+/* ── sheets ───────────────────────────────── */
+.sheet{background:var(--surface); border:1px solid var(--rule); padding:20px 20px 22px; margin-bottom:20px}
+.sheet > header{display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:4px}
+.sheet h2{font-size:19px}
+.sheet h3{font-size:15px; font-family:var(--body); font-weight:600; letter-spacing:0}
+.note{color:var(--muted); font-size:12.5px; line-height:1.55}
+.hint{color:var(--faint); font-size:12px}
+.divider{height:1px; background:var(--rule); border:0; margin:18px 0}
+
+/* ── controls ─────────────────────────────── */
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end}
+.field{display:flex; flex-direction:column; gap:4px; min-width:0}
+.field > span{font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:500}
+input,select,textarea{
+  background:var(--surface-2); border:1px solid var(--rule-strong); border-radius:2px;
+  padding:7px 9px; font-size:14px; min-width:0; width:100%;
+}
+input[type="number"]{font-family:var(--mono)}
+textarea{resize:vertical; min-height:58px}
+.btn{
+  background:var(--ink); color:var(--surface); border:1px solid var(--ink); border-radius:2px;
+  padding:8px 14px; font-size:13.5px; font-weight:500; cursor:pointer;
+}
+.btn:hover{opacity:.87}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--rule-strong)}
+.btn.ghost:hover{background:var(--surface-2); opacity:1}
+.btn.tiny{padding:4px 9px; font-size:12px}
+.btn.danger{color:var(--far); border-color:var(--rule-strong); background:transparent}
+
+/* ── tables ───────────────────────────────── */
+.tablewrap{overflow-x:auto; margin-top:12px}
+table{border-collapse:collapse; width:100%; min-width:560px; font-size:13.5px}
+th{
+  text-align:left; font-weight:500; font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--muted); padding:0 8px 7px; border-bottom:1px solid var(--rule-strong); white-space:nowrap;
+}
+td{padding:5px 8px; border-bottom:1px solid var(--rule); vertical-align:middle}
+tbody tr:hover{background:var(--surface-2)}
+td input,td select{padding:5px 7px; font-size:13px; background:transparent; border-color:transparent}
+td input:hover,td select:hover{border-color:var(--rule)}
+td input:focus,td select:focus{background:var(--surface-2); border-color:var(--rule-strong)}
+td.n{text-align:right}
+.empty{color:var(--faint); font-size:13px; padding:18px 2px; text-align:center}
+
+/* ── stat strip ───────────────────────────── */
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin-top:14px}
+.stat{background:var(--surface); padding:12px 14px 13px}
+.stat .k{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); display:block}
+.stat .v{display:block; font-family:var(--mono); font-size:25px; font-weight:600; line-height:1.25; letter-spacing:-.02em}
+.stat .v small{font-size:13px; font-weight:400; color:var(--muted); letter-spacing:0}
+.stat .sub{font-size:11.5px; color:var(--faint)}
+
+/* ── judgement chips ──────────────────────── */
+.chip{
+  display:inline-flex; align-items:center; gap:5px; padding:2px 9px 3px; border-radius:999px;
+  font-size:11.5px; font-weight:600; letter-spacing:.02em; white-space:nowrap; border:1px solid transparent;
+}
+.chip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
+.j-ok{color:var(--ok); background:var(--ok-bg); border-color:color-mix(in srgb,var(--ok) 26%,transparent)}
+.j-fit{color:var(--fit); background:var(--fit-bg); border-color:color-mix(in srgb,var(--fit) 26%,transparent)}
+.j-reach{color:var(--reach); background:var(--reach-bg); border-color:color-mix(in srgb,var(--reach) 26%,transparent)}
+.j-far{color:var(--far); background:var(--far-bg); border-color:color-mix(in srgb,var(--far) 26%,transparent)}
+.chip.plain{background:var(--surface-2); color:var(--muted); border-color:var(--rule); font-weight:500}
+.chip.plain::before{display:none}
+
+/* ── lane gauge ───────────────────────────── */
+.lane-card{border:1px solid var(--rule); border-left:3px solid var(--rule-strong); background:var(--surface); padding:15px 17px 17px; margin-bottom:12px}
+.lane-card.is-ok{border-left-color:var(--ok)}
+.lane-card.is-fit{border-left-color:var(--fit)}
+.lane-card.is-reach{border-left-color:var(--reach)}
+.lane-card.is-far{border-left-color:var(--far)}
+.lane-head{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+.lane-head .title{font-weight:600; font-size:15.5px}
+.lane-head .meta{font-size:12px; color:var(--muted)}
+.lane{position:relative; height:46px; margin-top:14px}
+.lane-track{position:absolute; left:0; right:0; top:17px; height:10px; background:var(--sunken); border:1px solid var(--rule)}
+.lane-fill{position:absolute; top:17px; height:10px; opacity:.22}
+.lane-cut{position:absolute; top:6px; width:2px; height:32px; background:var(--ink-2)}
+.lane-cut.soft{background:var(--faint); width:1px; top:10px; height:24px}
+.lane-cut b{
+  position:absolute; top:-14px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  font-size:10px; font-family:var(--mono); color:var(--muted); font-weight:500; letter-spacing:.02em;
+}
+.lane-me{position:absolute; top:11px; width:14px; height:22px; margin-left:-7px; border-radius:2px; border:2px solid var(--surface)}
+.lane-me span{
+  position:absolute; top:24px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  font-size:11px; font-family:var(--mono); font-weight:600;
+}
+.lane-scale{display:flex; justify-content:space-between; font-size:10.5px; color:var(--faint); font-family:var(--mono); margin-top:2px}
+.lane-foot{display:flex; gap:18px; flex-wrap:wrap; margin-top:16px; font-size:12.5px; color:var(--muted)}
+.lane-foot b{color:var(--ink); font-family:var(--mono); font-weight:600}
+.warnbar{
+  margin-top:12px; padding:8px 11px; font-size:12.5px; background:var(--far-bg); color:var(--far);
+  border:1px solid color-mix(in srgb,var(--far) 24%,transparent);
+}
+.warnbar.mild{background:var(--reach-bg); color:var(--reach); border-color:color-mix(in srgb,var(--reach) 24%,transparent)}
+
+/* ── charts ───────────────────────────────── */
+.chartbox{position:relative; margin-top:16px}
+.chartbox svg{display:block; width:100%; height:auto; overflow:visible}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:10px}
+.legend i{display:inline-block; width:16px; height:3px; border-radius:2px; vertical-align:middle; margin-right:5px}
+.tip{
+  position:absolute; pointer-events:none; background:var(--ink); color:var(--ground);
+  padding:6px 9px; border-radius:3px; font-size:11.5px; line-height:1.5; white-space:nowrap;
+  transform:translate(-50%,-115%); opacity:0; transition:opacity .1s; z-index:5; font-family:var(--mono);
+}
+.tip.on{opacity:1}
+
+/* ── target editor ────────────────────────── */
+.tgt{border:1px solid var(--rule); background:var(--surface); margin-bottom:12px}
+.tgt > summary{
+  padding:13px 16px; cursor:pointer; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  list-style:none; font-weight:500;
+}
+.tgt > summary::-webkit-details-marker{display:none}
+.tgt > summary::before{content:"▸"; color:var(--faint); font-size:11px}
+.tgt[open] > summary::before{content:"▾"}
+.tgt[open] > summary{border-bottom:1px solid var(--rule); background:var(--surface-2)}
+.tgt .body{padding:16px}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px}
+.grid.tight{grid-template-columns:repeat(auto-fit,minmax(92px,1fr))}
+fieldset{border:1px solid var(--rule); padding:13px 14px 15px; margin:0 0 14px; border-radius:2px}
+legend{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:0 6px; font-weight:500}
+.checks{display:flex; gap:12px; flex-wrap:wrap}
+.checks label{display:flex; gap:5px; align-items:center; font-size:13.5px}
+.checks input{width:auto}
+
+/* ── strategy ─────────────────────────────── */
+.lever{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:11px 0; border-bottom:1px solid var(--rule)}
+.lever:last-child{border-bottom:0}
+.lever .rank{font-family:var(--mono); font-size:12px; color:var(--surface); background:var(--ink); width:22px; height:22px; display:grid; place-items:center; border-radius:50%; font-weight:600}
+.lever .what{font-weight:500; font-size:14.5px}
+.lever .why{font-size:12.5px; color:var(--muted)}
+.lever .gain{font-family:var(--mono); font-weight:600; font-size:15px; text-align:right; white-space:nowrap}
+.lever .gain small{display:block; font-size:10.5px; color:var(--faint); font-weight:400; letter-spacing:.05em}
+.todo{display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--rule)}
+.todo input[type="checkbox"]{width:auto; margin-top:5px; accent-color:var(--fit)}
+.todo .t{flex:1; min-width:0}
+.todo.done .t{color:var(--faint); text-decoration:line-through}
+
+/* ── misc ─────────────────────────────────── */
+.banner{
+  display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  background:var(--reach-bg); color:var(--reach); border:1px solid color-mix(in srgb,var(--reach) 24%,transparent);
+  padding:10px 14px; font-size:13px; margin-bottom:18px;
+}
+.banner .btn{background:var(--reach); border-color:var(--reach); color:var(--surface)}
+.savebar{display:flex; gap:8px; align-items:center; font-size:11.5px; color:var(--faint); font-family:var(--mono)}
+.dot{width:6px; height:6px; border-radius:50%; background:var(--faint); display:inline-block}
+.dot.live{background:var(--ok)} .dot.busy{background:var(--reach)}
+.method{font-size:12.5px; color:var(--muted); line-height:1.7}
+.method code{font-family:var(--mono); font-size:11.5px; background:var(--surface-2); padding:1px 5px; border:1px solid var(--rule)}
+.method dt{font-weight:600; color:var(--ink-2); margin-top:11px; font-size:13px}
+.method dd{margin:2px 0 0}
+footer.page{border-top:1px solid var(--rule); margin-top:34px; padding-top:18px}
+@media (max-width:560px){
+  .masthead{padding-block:24px 16px}
+  .sheet{padding:16px 14px 18px}
+  table{min-width:500px}
+  .lever{grid-template-columns:auto 1fr; }
+  .lever .gain{grid-column:2; text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="wrap">
+<header class="masthead">
+  <div>
+    <p class="eyebrow">2028학년도 · 체육 · 스포츠 계열</p>
+    <h1>체대입시 전략판</h1>
+    <p class="sub">내신과 모의고사를 한 번 넣어두면, 전형별 환산점수 · 합격선 대비 위치 · 남은 기간 우선순위를 계속 다시 계산합니다.</p>
+  </div>
+  <div class="ddays" id="ddays"></div>
+</header>
+
+<nav class="tabs" role="tablist" id="tabs">
+  <button role="tab" id="tab-score" aria-selected="true" aria-controls="p-score">성적</button>
+  <button role="tab" id="tab-target" aria-selected="false" aria-controls="p-target">지원 후보<span class="count" id="cnt-target"></span></button>
+  <button role="tab" id="tab-pos" aria-selected="false" aria-controls="p-pos">내 위치</button>
+  <button role="tab" id="tab-plan" aria-selected="false" aria-controls="p-plan">전략</button>
+  <button role="tab" id="tab-how" aria-selected="false" aria-controls="p-how">산출 기준</button>
+</nav>
+
+<div id="banner-slot"></div>
+
+<!-- ══ 성적 ══ -->
+<section class="panel" id="p-score" role="tabpanel" aria-labelledby="tab-score">
+  <div class="sheet">
+    <header><h2>기본 정보</h2></header>
+    <div class="row" style="margin-top:12px">
+      <label class="field" style="flex:1 1 130px"><span>이름</span><input id="f-name" type="text" placeholder="이름"></label>
+      <label class="field" style="flex:0 1 120px"><span>학년도</span><input id="f-year" type="number" step="1"></label>
+      <label class="field" style="flex:0 1 110px"><span>내신 등급제</span>
+        <select id="f-scale"><option value="5">5등급</option><option value="9">9등급</option></select></label>
+      <label class="field" style="flex:0 1 160px"><span>수능일</span><input id="f-sd" type="date"></label>
+      <label class="field" style="flex:0 1 160px"><span>수시 원서접수</span><input id="f-su" type="date"></label>
+    </div>
+    <p class="hint" style="margin-top:10px">2028학년도 기준 기본값: 내신 5등급 상대평가, 수능 11월 셋째 목요일(예상). 확정 일정이 나오면 날짜를 고쳐 주세요.</p>
+  </div>
+
+  <div class="sheet">
+    <header>
+      <h2>내신 (학생부 교과)</h2>
+      <div class="row" style="gap:6px">
+        <button class="btn ghost tiny" id="add-term">학기 묶음 추가</button>
+        <button class="btn ghost tiny" id="add-subj">과목 한 줄 추가</button>
+      </div>
+    </header>
+    <p class="note">이수단위를 반영한 가중평균으로 계산합니다. 등급이 비어 있는 줄은 계산에서 빠집니다.</p>
+    <div class="stats" id="naesin-stats"></div>
+    <div class="tablewrap">
+      <table id="naesin-table">
+        <thead><tr>
+          <th style="width:66px">학년·학기</th><th style="width:96px">교과</th><th>과목</th>
+          <th style="width:72px">단위</th><th style="width:76px">등급</th><th style="width:40px"></th>
+        </tr></thead>
+        <tbody id="naesin-body"></tbody>
+      </table>
+    </div>
+    <hr class="divider">
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:26px">
+      <div>
+        <h3>학기별 반영등급 추이</h3>
+        <p class="hint">국어·수학·영어·사회·과학 가중평균. 위로 갈수록 좋은 등급입니다.</p>
+        <div class="chartbox" id="chart-trend"></div>
+      </div>
+      <div>
+        <h3>교과별 평균등급</h3>
+        <p class="hint">막대가 짧을수록 좋은 등급입니다. 괄호는 이수단위 합계.</p>
+        <div class="chartbox" id="chart-subj"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <header>
+      <h2>수능 · 모의고사</h2>
+      <button class="btn ghost tiny" id="add-mock">회차 추가</button>
+    </header>
+    <p class="note">국어 · 수학 · 탐구는 백분위와 등급을, 영어는 등급만 입력합니다(절대평가). 탐구는 2028학년도 통합사회 · 통합과학 평균으로 넣으면 됩니다.</p>
+    <div class="tablewrap">
+      <table id="mock-table">
+        <thead><tr>
+          <th style="width:104px">회차</th>
+          <th colspan="2">국어</th><th colspan="2">수학</th><th>영어</th><th colspan="2">탐구</th>
+          <th style="width:40px"></th>
+        </tr>
+        <tr>
+          <th></th><th style="width:66px">백분위</th><th style="width:56px">등급</th>
+          <th style="width:66px">백분위</th><th style="width:56px">등급</th>
+          <th style="width:56px">등급</th>
+          <th style="width:66px">백분위</th><th style="width:56px">등급</th><th></th>
+        </tr></thead>
+        <tbody id="mock-body"></tbody>
+      </table>
+    </div>
+    <hr class="divider">
+    <h3>영역별 백분위 추이</h3>
+    <div class="chartbox" id="chart-mock"></div>
+    <div class="legend" id="legend-mock"></div>
+  </div>
+</section>
+
+<!-- ══ 지원 후보 ══ -->
+<section class="panel" id="p-target" role="tabpanel" aria-labelledby="tab-target" hidden>
+  <div class="sheet">
+    <header><h2>지원 후보 추가</h2></header>
+    <p class="note">저장소의 체육 · 스포츠 학과 목록(84개 학과 / 39개 대학)에서 고르거나, 직접 입력할 수 있습니다. 대학별 전형 자료를 받으면 아래 카드에 반영비율과 환산표를 채워 넣으세요.</p>
+    <div class="row" style="margin-top:14px">
+      <label class="field" style="flex:2 1 260px"><span>학과 목록에서 선택</span>
+        <select id="pick-dept"></select></label>
+      <button class="btn" id="add-target">후보로 추가</button>
+      <button class="btn ghost" id="add-blank">빈 카드로 직접 입력</button>
+    </div>
+    <div class="stats" id="target-stats"></div>
+  </div>
+  <div id="target-list"></div>
+</section>
+
+<!-- ══ 내 위치 ══ -->
+<section class="panel" id="p-pos" role="tabpanel" aria-labelledby="tab-pos" hidden>
+  <div class="sheet">
+    <header>
+      <h2>합격선 대비 내 위치</h2>
+      <label class="field" style="flex:0 0 150px"><span>정렬</span>
+        <select id="sort-pos">
+          <option value="margin">여유 큰 순</option>
+          <option value="name">대학명 순</option>
+          <option value="type">전형 구분 순</option>
+        </select></label>
+    </header>
+    <p class="note">가로축은 과년도 합격선(70%컷)을 기준으로 좌우 폭을 잡은 눈금입니다. 오른쪽으로 갈수록 유리합니다.</p>
+    <div class="stats" id="pos-stats"></div>
+  </div>
+  <div id="pos-list"></div>
+</section>
+
+<!-- ══ 전략 ══ -->
+<section class="panel" id="p-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+  <div class="sheet">
+    <header><h2>지금 올려서 가장 이득인 것</h2></header>
+    <p class="note">후보로 등록한 전형 전체에 대해, 한 항목을 한 단계 올렸을 때 환산점수가 평균 몇 점 오르는지 계산해 큰 순서로 세웁니다. 반영비율이 0인 항목은 아무리 올려도 점수가 오르지 않으므로 빠집니다.</p>
+    <div id="levers"></div>
+  </div>
+
+  <div class="sheet">
+    <header><h2>수능 최저학력기준 진단</h2></header>
+    <p class="note">최근 회차 등급으로 판정합니다. 최저를 못 맞추면 교과 · 실기 점수와 무관하게 불합격이므로, 미충족 전형이 있으면 그것이 1순위입니다.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>대학 · 학과</th><th>기준</th><th style="width:88px">현재 등급합</th><th style="width:80px">판정</th><th>가장 가까운 개선</th></tr></thead>
+      <tbody id="choejeo-body"></tbody>
+    </table></div>
+  </div>
+
+  <div class="sheet">
+    <header>
+      <h2>할 일</h2>
+      <button class="btn ghost tiny" id="add-task">항목 추가</button>
+    </header>
+    <p class="note">체크 상태까지 저장됩니다. 두 컴퓨터 어디서 열어도 같은 목록이 보입니다.</p>
+    <div id="task-list"></div>
+  </div>
+</section>
+
+<!-- ══ 산출 기준 ══ -->
+<section class="panel" id="p-how" role="tabpanel" aria-labelledby="tab-how" hidden>
+  <div class="sheet">
+    <header><h2>이 페이지가 계산하는 방식</h2></header>
+    <dl class="method">
+      <dt>교과 환산점수</dt>
+      <dd><code>Σ(등급점수 × 이수단위 × 학년가중치) ÷ Σ(이수단위 × 학년가중치)</code> — 전형 카드에서 고른 반영 교과만, 그 카드의 등급환산표로 계산합니다. 대학마다 환산표가 다르므로 전형 자료의 표를 그대로 옮겨 적는 것이 정확합니다.</dd>
+      <dt>반영등급</dt>
+      <dd>같은 가중치로 계산한 <em>등급</em> 평균입니다. 과년도 결과가 “3.8등급”처럼 등급으로 공개된 전형은 이 값으로 비교합니다.</dd>
+      <dt>수능 환산점수</dt>
+      <dd><code>Σ(영역 백분위 × 영역 반영비율) ÷ Σ(영역 반영비율)</code>. 영어는 절대평가이므로 전형 카드의 영어 등급별 점수표를 씁니다.</dd>
+      <dt>최종 환산점수</dt>
+      <dd>교과 · 수능 · 실기 · 면접 점수를 각 반영비율로 가중평균해 100점 만점으로 환산합니다. 실기와 면접은 아직 치르지 않았으므로 “예상 득점률”을 넣어 시나리오를 봅니다.</dd>
+      <dt>판정 기준</dt>
+      <dd>과년도 70%컷과의 차이로 나눕니다. 점수 기준이면 <strong>+3점 이상 안정 / 0점 이상 적정 / −3점 이상 소신 / 그 아래 도전</strong>, 등급 기준이면 <strong>0.5등급 이상 안정 / 동률 이상 적정 / 0.4등급 이내 소신 / 그 아래 도전</strong>입니다. 수능 최저 미충족이면 다른 점수와 무관하게 도전으로 내립니다.</dd>
+      <dt>주의</dt>
+      <dd>과년도 합격선은 그 해 지원자 분포 · 모집인원 · 문제 난이도에 따라 매년 움직입니다. 이 페이지의 판정은 <em>기준선</em>이지 예측이 아닙니다. 반영비율 · 환산표 · 최저기준은 반드시 각 대학이 발표한 모집요강 원문으로 확인하세요.</dd>
+    </dl>
+  </div>
+  <div class="sheet">
+    <header><h2>데이터 보관</h2></header>
+    <p class="note">입력한 값은 이 페이지에 저장되어 같은 계정으로 어느 컴퓨터에서 열어도 그대로 보입니다. 브라우저에도 사본이 남아 오프라인에서도 열립니다. 아래에서 파일로 내려받아 <span class="num">내신</span> 폴더에 함께 보관해 두면 백업이 됩니다.</p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="export-json">JSON으로 내려받기</button>
+      <button class="btn ghost" id="import-json">파일에서 불러오기</button>
+      <input type="file" id="file-json" accept="application/json,.json" hidden>
+      <button class="btn danger" id="reset-all">전체 지우기</button>
+    </div>
+    <p class="hint" style="margin-top:10px" id="storage-note"></p>
+  </div>
+</section>
+
+<footer class="page">
+  <p class="note">근거 자료: 이 저장소의 2028학년도 대학입학전형시행계획 PDF 145건에서 뽑은 체육 · 스포츠 학과 목록. 전형별 세부 반영방법은 각 대학 모집요강을 따릅니다.</p>
+</footer>
+</div>
+
+<script id="catalog" type="application/json">[["가야대학교","경남","스포츠재활복지학과","학생부 100%","없음","없음","예","-"],["강남대학교","경기","체육학과","실기/실적위주(실기전형)","있음","없음","아니오","미명시"],["가천대학교","경기","체육학부","실기우수자","있음","없음","아니오","미명시"],["가톨릭관동대학교","강원","스포츠레저학전공","실기/실적위주","있음","없음","아니오","배구(월패스)"],["가톨릭관동대학교","강원","스포츠재활의학전공","실기/실적위주","있음","없음","아니오","배구(월패스)"],["가톨릭관동대학교","강원","스포츠지도학전공","실기/실적위주","있음","없음","아니오","배구(월패스)"],["건양대학교","충남","스포츠의학전공","학생부교과위주","없음","없음","예","-"],["건양대학교","충남","재활퍼스널트레이닝학과","학생부교과위주","없음","없음","예","-"],["경국대학교","경북","체육학전공","체육특기자전형","있음","없음","아니오","체육실기"],["경국대학교","경북","스포츠레저학전공","학생부교과위주","없음","없음","예","-"],["경기대학교","경기","체육학과","체육실기우수자전형/체육특기자전형","있음","확인 필요","아니오","20m왕복달리기+제자리멀리뛰기"],["경기대학교","경기","스포츠과학부","확인 필요","확인 필요","확인 필요","확인 필요","-"],["경기대학교","경기","스포츠건강과학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["경기대학교","경기","스포츠레저산업전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["경남대학교","경남","스포츠과학부","체육특기자전형","있음","없음","아니오","체육특기"],["경남대학교","경남","스포츠재활학전공","체육특기자전형","있음","없음","아니오","체육특기"],["경남대학교","경남","스포츠지도학전공","체육특기자전형","있음","없음","아니오","체육특기"],["경동대학교","강원","체육학과","체육학과(일반학생) 실기/면접","있음","있음","아니오","체육 실기"],["경동대학교","강원","스포츠마케팅학과","학생부교과위주","없음","없음","예","-"],["경북대학교","대구","체육학부(체육학전공)","실기/실적(예·체능)전형","있음","없음","아니오","Z자 달리기, 제자리멀리뛰기, 반복 옆뛰기, 공 벽치기"],["경북대학교","대구","체육학부(건강운동관리전공)","학생부교과위주","없음","없음","예","-"],["경상국립대학교","경남","스포츠헬스케어학과","실기/실적 특기자전형","있음","없음","아니오","미명시"],["경성대학교","부산","스포츠건강학과","실기특별","있음","없음","아니오","실기과제"],["한국체육대학교","서울","체육학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","스포츠과학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","스포츠재활학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","레저스포츠학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","스포츠심리학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한국체육대학교","서울","e스포츠학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["경성대학교","부산","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["동의대학교","부산","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["세종대학교","서울","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["광주대학교","광주","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["대구대학교","대구","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["경남대학교","경남","스포츠산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["동국대학교","서울","스포츠문화학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["계명대학교","대구","체육학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["계명대학교","대구","사회체육학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["계명대학교","대구","실버스포츠복지학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["계명대학교","대구","스포츠마케팅학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["계명대학교","대구","태권도학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["국민대학교","서울","스포츠교육학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["국민대학교","서울","스포츠산업경영학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["국민대학교","서울","스포츠건강재활학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["군산대학교","전북","체육학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["군산대학교","전북","스포츠과학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["극동대학교","충북","스포츠재활학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["김천대학교","경북","생활체육학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["나사렛대학교","충남","재활스포츠학부","확인 필요","확인 필요","확인 필요","확인 필요","-"],["나사렛대학교","충남","특수체육학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["나사렛대학교","충남","스포츠재활전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["나사렛대학교","충남","시니어스포츠전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["나사렛대학교","충남","태권도학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["남부대학교","광주","스포츠레저학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["남부대학교","광주","무도경호학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["남서울대학교","충남","스포츠비즈니스학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["남서울대학교","충남","글로벌스포츠학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["남서울대학교","충남","스포츠건강관리학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천대학교","전남","사회체육학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천향대학교","충남","스포츠과학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천향대학교","충남","스포츠응용산업학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천향대학교","충남","글로벌스포츠경영학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천향대학교","충남","스포츠의학전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["순천향대학교","충남","스마트헬스라이프전공","확인 필요","확인 필요","확인 필요","확인 필요","-"],["숭실대학교","서울","스포츠학부","확인 필요","확인 필요","확인 필요","확인 필요","-"],["신경주대학교","경북","스포츠리더양성학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["성균관대","서울","스포츠과학과","예체능실기우수자","있음","확인 필요","아니오","스포츠과학과 실기시험"],["세종대학교","서울","체육학과","예체능특기자전형","있음","확인 필요","아니오","체육학과 실기"],["인하대학교","인천","스포츠과학과","체능(지원모집단위활동실적제출필수)","확인 필요","확인 필요","확인 필요","-"],["중앙대학교","서울","스포츠과학부","확인 필요","확인 필요","확인 필요","확인 필요","-"],["중원대학교","충북","운동레저학부","실기/실적(체육우수인재)","있음","있음","아니오","체육 우수인재 실기/실적"],["중원대학교","충북","스포츠지도학과","실기/실적(체육우수인재)","있음","있음","아니오","체육 우수인재 실기/실적"],["중원대학교","충북","스포츠산업학과","실기/실적(체육우수인재)","있음","있음","아니오","체육 우수인재 실기/실적"],["중원대학교","충북","골프과학과","실기/실적(체육우수인재)","있음","있음","아니오","체육 우수인재 실기/실적"],["중원대학교","충북","스포츠과학과","학생부교과(일반전형2)","없음","있음","아니오","-"],["중원대학교","충북","스포츠가라테학과","실기/실적(체육우수인재)","있음","있음","아니오","체육 우수인재 실기/실적"],["창원대학교","경남","체육학과","확인 필요","있음","확인 필요","아니오","체육학과 실기"],["청운대학교","충남","스포츠과학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한서대학교","충남","레저해양스포츠학과","실기위주정원내 일반전형","있음","확인 필요","아니오","20m 왕복 달리기, 제자리 멀리뛰기, 메디신볼 던지기"],["한양대학교","서울","스포츠산업과학부(스포츠매니지먼트전공)","확인 필요","확인 필요","확인 필요","확인 필요","-"],["한양대학교","서울","스포츠산업과학부(스포츠사이언스전공)","확인 필요","확인 필요","확인 필요","확인 필요","-"],["동양대학교","경북","e스포츠학과","확인 필요","확인 필요","확인 필요","확인 필요","-"],["동양대학교","경북","생활체육학과","실기우수자","있음","확인 필요","아니오","체육 실기"]]</script>
+
+<script>
+(function(){
+"use strict";
+
+/* ══════════════ 상수 ══════════════ */
+const CAT = JSON.parse(document.getElementById("catalog").textContent);
+const SUBJECTS = ["국어","수학","영어","사회","과학","한국사","체육","예술","기타"];
+const CORE = ["국어","수학","영어","사회","과학"];
+const AREAS = ["국어","수학","영어","탐구"];
+const AREA_COLOR = {"국어":"var(--s1)","수학":"var(--s2)","영어":"var(--s3)","탐구":"var(--s4)"};
+const SCALE_TABLE = {5:[100,96,88,76,60], 9:[100,96,92,88,84,80,70,50,20]};
+const ENG_TABLE_DEFAULT = [100,95,88,80,70,58,44,28,10];
+const TYPES = ["수시 · 교과","수시 · 종합","수시 · 실기","정시"];
+const JUDGE = {
+  ok:{k:"ok", label:"안정"}, fit:{k:"fit", label:"적정"},
+  reach:{k:"reach", label:"소신"}, far:{k:"far", label:"도전"}
+};
+const LS_KEY = "chedae-strategy-v1";
+const uid = () => Math.random().toString(36).slice(2,9);
+
+/* ══════════════ 예시 데이터 ══════════════ */
+function exampleState(){
+  const n = [];
+  const put = (y,t,g,name,u,r) => n.push({id:uid(), y, t, g, n:name, u, r});
+  put(1,1,"국어","공통국어1",4,3); put(1,1,"수학","공통수학1",4,4); put(1,1,"영어","공통영어1",4,3);
+  put(1,1,"사회","통합사회1",3,2); put(1,1,"과학","통합과학1",3,4); put(1,1,"체육","체육1",2,1);
+  put(1,2,"국어","공통국어2",4,3); put(1,2,"수학","공통수학2",4,4); put(1,2,"영어","공통영어2",4,2);
+  put(1,2,"사회","통합사회2",3,2); put(1,2,"과학","통합과학2",3,3); put(1,2,"체육","체육2",2,1);
+  put(2,1,"국어","문학",4,2); put(2,1,"수학","대수",4,4); put(2,1,"영어","영어I",4,2);
+  put(2,1,"사회","세계시민과 지리",4,2); put(2,1,"과학","물질과 에너지",4,3); put(2,1,"체육","운동과 건강",2,1);
+  return {
+    profile:{name:"서영", year:2028, scale:5, sd:"2027-11-18", su:"2027-09-08"},
+    naesin:n,
+    mock:[
+      {id:uid(), round:"2026-03", 국어:{p:74,g:3}, 수학:{p:58,g:4}, 영어:{g:3}, 탐구:{p:80,g:3}},
+      {id:uid(), round:"2026-06", 국어:{p:79,g:3}, 수학:{p:62,g:4}, 영어:{g:2}, 탐구:{p:84,g:2}},
+      {id:uid(), round:"2026-09", 국어:{p:82,g:2}, 수학:{p:66,g:4}, 영어:{g:2}, 탐구:{p:86,g:2}}
+    ],
+    targets:[
+      mkTarget({univ:"경북대학교", dept:"체육학부(체육학전공)", region:"대구", name:"실기/실적(예·체능)",
+        type:"수시 · 실기", ratio:{gyo:30, sil:70, my:0, sun:0}, silgi:72,
+        prev:[{y:2027, basis:"등급", c70:2.60, c50:2.30, rate:8.4, fill:105}]}),
+      mkTarget({univ:"건양대학교", dept:"스포츠의학전공", region:"충남", name:"학생부교과(일반)",
+        type:"수시 · 교과", ratio:{gyo:100, sil:0, my:0, sun:0},
+        prev:[{y:2027, basis:"등급", c70:4.60, c50:4.10, rate:5.2, fill:120}]}),
+      mkTarget({univ:"한국체육대학교", dept:"체육학과", region:"서울", name:"정시 나군",
+        type:"정시", ratio:{gyo:0, sil:40, my:0, sun:60}, silgi:70,
+        sunRatio:{국어:30, 수학:20, 영어:20, 탐구:30},
+        choejeo:{on:true, n:2, sum:3},
+        prev:[{y:2027, basis:"점수", c70:79.5, c50:82.0, rate:4.1, fill:60}]})
+    ],
+    tasks:[
+      {id:uid(), text:"경북대 실기 4종목 기록 측정해서 예상 득점률 갱신", area:"실기", due:"", done:false},
+      {id:uid(), text:"수학 3학년 1학기 대비 — 반영교과라 단위 수가 큼", area:"내신", due:"", done:false},
+      {id:uid(), text:"지원 후보 대학 모집요강 나오면 환산표 원문으로 교체", area:"자료", due:"", done:true}
+    ],
+    isExample:true
+  };
+}
+
+function mkTarget(o){
+  return Object.assign({
+    id:uid(), univ:"", dept:"", region:"", name:"", type:"수시 · 교과",
+    ratio:{gyo:100, sil:0, my:0, sun:0},
+    subjects:CORE.slice(), weights:{1:1, 2:1, 3:1},
+    table:null,
+    sunRatio:{국어:25, 수학:25, 영어:25, 탐구:25},
+    engTable:ENG_TABLE_DEFAULT.slice(),
+    choejeo:{on:false, n:2, sum:6},
+    silgi:75, my:85,
+    prev:[],
+    memo:""
+  }, o);
+}
+
+/* ══════════════ 상태 ══════════════ */
+let S = null;
+let db = null, docRef = null, unsub = null, pending = false;
+let saveTimer = null;
+
+function blankState(){
+  return {profile:{name:"", year:2028, scale:5, sd:"2027-11-18", su:"2027-09-08"},
+          naesin:[], mock:[], targets:[], tasks:[], isExample:false};
+}
+function normalize(x){
+  const b = blankState();
+  if(!x || typeof x !== "object") return b;
+  const s = Object.assign(b, x);
+  s.profile = Object.assign(b.profile, x.profile||{});
+  ["naesin","mock","targets","tasks"].forEach(k => { if(!Array.isArray(s[k])) s[k] = []; });
+  s.targets = s.targets.map(t => Object.assign(mkTarget({}), t, {id:t.id||uid()}));
+  return s;
+}
+
+/* ══════════════ 저장 ══════════════ */
+function markSaving(){
+  const el = document.getElementById("save-dot");
+  if(el){ el.className = "dot busy"; document.getElementById("save-text").textContent = "저장 중"; }
+}
+function markSaved(){
+  const el = document.getElementById("save-dot");
+  if(!el) return;
+  el.className = db ? "dot live" : "dot";
+  document.getElementById("save-text").textContent =
+    db ? "저장됨 · 기기 간 동기화" : "이 브라우저에 저장됨";
+}
+function persist(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
+  if(!docRef) { markSaved(); return; }
+  markSaving();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try{
+      pending = true;
+      await docRef.set({payload: JSON.stringify(S), at: Date.now()});
+      markSaved();
+    }catch(err){
+      const el = document.getElementById("save-text");
+      if(el) el.textContent = err && err.code === "revoked" ? "동기화 중단됨 (브라우저 저장은 유지)" : "동기화 실패 — 브라우저에는 저장됨";
+      const d = document.getElementById("save-dot"); if(d) d.className = "dot";
+    }finally{ setTimeout(()=>{pending=false;}, 400); }
+  }, 500);
+}
+function commit(){ persist(); renderAll(); }
+
+async function connect(){
+  let store = null;
+  try{ store = await claude.use("db"); }catch(e){ store = null; }
+  if(!store) { markSaved(); return; }
+  db = store;
+  docRef = db.doc("plan/main");
+  unsub = docRef.onSnapshot(snap => {
+    if(pending) return;
+    if(!snap.exists) return;
+    const raw = snap.data() && snap.data().payload;
+    if(typeof raw !== "string") return;
+    let inc; try{ inc = JSON.parse(raw); }catch(e){ return; }
+    if(JSON.stringify(inc) === JSON.stringify(S)) return;
+    S = normalize(inc);
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){}
+    renderAll();
+  }, () => { db = null; docRef = null; markSaved(); });
+  markSaved();
+  document.getElementById("storage-note").textContent =
+    "지금 이 페이지는 계정 저장소에 연결되어 있습니다. 집과 학교 컴퓨터 어디서 열어도 같은 값이 보이고, 브라우저에도 사본이 남습니다.";
+}
+
+/* ══════════════ 계산 ══════════════ */
+const round1 = v => Math.round(v*10)/10;
+const round2 = v => Math.round(v*100)/100;
+const validRows = () => S.naesin.filter(r => r.r > 0 && r.u > 0);
+
+function gradeTable(t){ return (t.table && t.table.length === S.profile.scale) ? t.table : SCALE_TABLE[S.profile.scale]; }
+
+function weightedGrade(rows, weights){
+  let num = 0, den = 0;
+  rows.forEach(r => { const w = (weights && weights[r.y]) != null ? +weights[r.y] : 1;
+    num += r.r * r.u * w; den += r.u * w; });
+  return den ? num/den : null;
+}
+function tableScore(rows, weights, table){
+  let num = 0, den = 0;
+  rows.forEach(r => {
+    const w = (weights && weights[r.y]) != null ? +weights[r.y] : 1;
+    const idx = Math.min(Math.max(Math.round(r.r),1), table.length) - 1;
+    num += table[idx] * r.u * w; den += r.u * w;
+  });
+  return den ? num/den : null;
+}
+function rowsFor(t){ return validRows().filter(r => t.subjects.includes(r.g)); }
+function reflectGrade(t){ return weightedGrade(rowsFor(t), t.weights); }
+function gyoScore(t){ return tableScore(rowsFor(t), t.weights, gradeTable(t)); }
+
+function latestMock(){
+  const m = S.mock.filter(x => x.round).slice().sort((a,b) => a.round < b.round ? -1 : 1);
+  return m.length ? m[m.length-1] : null;
+}
+function areaGrade(m, a){ return m && m[a] && m[a].g > 0 ? m[a].g : null; }
+function areaPct(m, a){
+  if(!m || !m[a]) return null;
+  if(a === "영어") return null;
+  return m[a].p > 0 ? m[a].p : null;
+}
+function sunScore(t){
+  const m = latestMock(); if(!m) return null;
+  let num = 0, den = 0;
+  AREAS.forEach(a => {
+    const w = +t.sunRatio[a] || 0; if(!w) return;
+    let v = null;
+    if(a === "영어"){ const g = areaGrade(m,a); if(g) v = t.engTable[Math.min(g,9)-1]; }
+    else v = areaPct(m, a);
+    if(v == null) return;
+    num += v * w; den += w;
+  });
+  return den ? num/den : null;
+}
+function finalScore(t){
+  const parts = [
+    [t.ratio.gyo, gyoScore(t)],
+    [t.ratio.sun, sunScore(t)],
+    [t.ratio.sil, +t.silgi || 0],
+    [t.ratio.my,  +t.my   || 0]
+  ];
+  let num = 0, den = 0;
+  parts.forEach(([w, v]) => { w = +w || 0; if(!w || v == null) return; num += w*v; den += w; });
+  return den ? num/den : null;
+}
+function checkChoejeo(t){
+  if(!t.choejeo || !t.choejeo.on) return null;
+  const m = latestMock(); if(!m) return {ok:null, sum:null, need:t.choejeo.sum, n:t.choejeo.n};
+  const gs = AREAS.map(a => areaGrade(m,a)).filter(g => g != null).sort((a,b)=>a-b);
+  const n = Math.min(t.choejeo.n, gs.length);
+  if(!n) return {ok:null, sum:null, need:t.choejeo.sum, n:t.choejeo.n};
+  const sum = gs.slice(0,n).reduce((a,b)=>a+b,0);
+  return {ok: sum <= t.choejeo.sum, sum, need:t.choejeo.sum, n:t.choejeo.n, short: Math.max(0, sum - t.choejeo.sum)};
+}
+function lastPrev(t){
+  const p = (t.prev||[]).filter(x => x && x.c70 != null && x.c70 !== "");
+  if(!p.length) return null;
+  return p.slice().sort((a,b) => (+a.y||0) - (+b.y||0))[p.length-1];
+}
+function judgeTarget(t){
+  const prev = lastPrev(t);
+  const cj = checkChoejeo(t);
+  if(!prev) return {j:null, prev:null, cj};
+  const basis = prev.basis || "등급";
+  let mine, margin;
+  if(basis === "등급"){ mine = reflectGrade(t); if(mine == null) return {j:null, prev, cj, mine:null};
+    margin = (+prev.c70) - mine; }
+  else { mine = finalScore(t); if(mine == null) return {j:null, prev, cj, mine:null};
+    margin = mine - (+prev.c70); }
+  const th = basis === "등급" ? [0.5, 0, -0.4] : [3, 0, -3];
+  let j = margin >= th[0] ? JUDGE.ok : margin >= th[1] ? JUDGE.fit : margin >= th[2] ? JUDGE.reach : JUDGE.far;
+  if(cj && cj.ok === false) j = JUDGE.far;
+  return {j, prev, cj, mine, margin, basis};
+}
+
+/* ══════════════ 렌더 유틸 ══════════════ */
+const $ = s => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if(cls) e.className = cls; if(txt != null) e.textContent = txt; return e; };
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function fmt(v, d){ return v == null || isNaN(v) ? "—" : (+v).toFixed(d == null ? 2 : d); }
+function daysTo(iso){
+  if(!iso) return null;
+  const t = new Date(iso + "T00:00:00");
+  if(isNaN(t)) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((t - now)/86400000);
+}
+
+/* ══════════════ D-day ══════════════ */
+function renderDdays(){
+  const box = $("#ddays"); box.innerHTML = "";
+  [["수능", S.profile.sd], ["수시 원서", S.profile.su]].forEach(([k, d]) => {
+    const n = daysTo(d);
+    const c = el("div","dday");
+    c.innerHTML = '<span class="k">'+k+'</span><span class="v">'+
+      (n == null ? "—" : n > 0 ? "D−"+n : n === 0 ? "D−day" : "D+"+(-n)) +
+      '</span><span class="d">'+ (d || "날짜 미설정") +'</span>';
+    box.appendChild(c);
+  });
+  const s = el("div","dday");
+  s.innerHTML = '<span class="k">저장</span><span class="savebar" style="margin-top:6px">'+
+    '<i class="dot" id="save-dot"></i><span id="save-text">불러오는 중</span></span>';
+  box.appendChild(s);
+  markSaved();
+}
+
+/* ══════════════ 성적: 내신 ══════════════ */
+function renderNaesin(){
+  const tb = $("#naesin-body"); tb.innerHTML = "";
+  const rows = S.naesin.slice().sort((a,b) => (a.y-b.y) || (a.t-b.t) || SUBJECTS.indexOf(a.g)-SUBJECTS.indexOf(b.g));
+  if(!rows.length){
+    tb.innerHTML = '<tr><td colspan="6" class="empty">아직 입력한 과목이 없습니다. “학기 묶음 추가”로 시작하세요.</td></tr>';
+  }
+  let lastKey = null;
+  rows.forEach(r => {
+    const tr = el("tr");
+    const key = r.y+"-"+r.t;
+    const c1 = el("td");
+    if(key !== lastKey){ c1.innerHTML = '<b class="num">'+r.y+"-"+r.t+'</b>'; lastKey = key; }
+    tr.appendChild(c1);
+    tr.appendChild(cellSelect(r, "g", SUBJECTS));
+    tr.appendChild(cellText(r, "n", "과목명"));
+    tr.appendChild(cellNum(r, "u", 0.5, 0, 20, "n"));
+    tr.appendChild(cellNum(r, "r", 1, 1, S.profile.scale, "n"));
+    const d = el("td");
+    const b = el("button","btn ghost tiny","✕"); b.title = "이 줄 삭제";
+    b.onclick = () => { S.naesin = S.naesin.filter(x => x.id !== r.id); commit(); };
+    d.appendChild(b); tr.appendChild(d);
+    tb.appendChild(tr);
+  });
+
+  const v = validRows();
+  const all = weightedGrade(v);
+  const core = weightedGrade(v.filter(r => CORE.includes(r.g)));
+  const units = v.reduce((a,r) => a + (+r.u||0), 0);
+  const terms = new Set(v.map(r => r.y+"-"+r.t)).size;
+  $("#naesin-stats").innerHTML =
+    stat("전과목 평균", fmt(all), "등급 · "+units+"단위") +
+    stat("국수영사과", fmt(core), "주요 5교과") +
+    stat("입력 학기", terms, "학기") +
+    stat("과목 수", v.length, "등급 입력 완료");
+}
+function stat(k, v, sub){
+  return '<div class="stat"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+
+    '</span><span class="sub">'+esc(sub||"")+'</span></div>';
+}
+function cellText(o, key, ph){
+  const td = el("td"); const i = el("input"); i.type="text"; i.value = o[key]||""; i.placeholder = ph||"";
+  i.id = "f-"+o.id+"-"+key;
+  i.oninput = () => { o[key] = i.value; persist(); };
+  td.appendChild(i); return td;
+}
+function cellNum(o, key, step, min, max, cls){
+  const td = el("td", cls); const i = el("input"); i.type="number"; i.step = step; if(min!=null) i.min=min; if(max!=null) i.max=max;
+  i.value = o[key] == null ? "" : o[key]; i.id = "f-"+o.id+"-"+key;
+  i.oninput = () => { o[key] = i.value === "" ? null : +i.value; persist(); };
+  i.onchange = () => renderAll();
+  td.appendChild(i); return td;
+}
+function cellSelect(o, key, opts){
+  const td = el("td"); const s = el("select"); s.id = "f-"+o.id+"-"+key;
+  opts.forEach(x => { const op = el("option", null, x); op.value = x; s.appendChild(op); });
+  s.value = o[key]; s.onchange = () => { o[key] = s.value; commit(); };
+  td.appendChild(s); return td;
+}
+
+/* ══════════════ 성적: 모의고사 ══════════════ */
+function renderMock(){
+  const tb = $("#mock-body"); tb.innerHTML = "";
+  const rows = S.mock.slice().sort((a,b) => a.round < b.round ? -1 : 1);
+  if(!rows.length){
+    tb.innerHTML = '<tr><td colspan="9" class="empty">모의고사 회차를 추가해 주세요.</td></tr>';
+  }
+  rows.forEach(m => {
+    const tr = el("tr");
+    const c0 = el("td"); const ri = el("input"); ri.type="text"; ri.value = m.round||""; ri.placeholder="2026-09";
+    ri.id = "f-"+m.id+"-round";
+    ri.oninput = () => { m.round = ri.value; persist(); }; ri.onchange = () => renderAll();
+    c0.appendChild(ri); tr.appendChild(c0);
+    AREAS.forEach(a => {
+      if(a !== "영어") tr.appendChild(areaCell(m, a, "p", 0, 100));
+      tr.appendChild(areaCell(m, a, "g", 1, 9));
+    });
+    const d = el("td");
+    const b = el("button","btn ghost tiny","✕"); b.title="회차 삭제";
+    b.onclick = () => { S.mock = S.mock.filter(x => x.id !== m.id); commit(); };
+    d.appendChild(b); tr.appendChild(d);
+    tb.appendChild(tr);
+  });
+}
+function areaCell(m, a, key, min, max){
+  if(!m[a]) m[a] = {};
+  const td = el("td","n"); const i = el("input"); i.type="number"; i.min=min; i.max=max;
+  i.value = m[a][key] == null ? "" : m[a][key]; i.id = "f-"+m.id+"-"+a+"-"+key;
+  i.oninput = () => { m[a][key] = i.value === "" ? null : +i.value; persist(); };
+  i.onchange = () => renderAll();
+  td.appendChild(i); return td;
+}
+
+/* ══════════════ 차트 ══════════════ */
+function svgEl(w,h){
+  const s = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("viewBox","0 0 "+w+" "+h); s.setAttribute("role","img");
+  return s;
+}
+function mk(n, attrs, txt){
+  const e = document.createElementNS("http://www.w3.org/2000/svg", n);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  if(txt != null) e.textContent = txt;
+  return e;
+}
+const TXT = {"font-family":"IBM Plex Mono, monospace","font-size":"10.5"};
+
+function renderTrend(){
+  const box = $("#chart-trend"); box.innerHTML = "";
+  const v = validRows().filter(r => CORE.includes(r.g));
+  const keys = [...new Set(v.map(r => r.y+"-"+r.t))].sort();
+  if(keys.length < 1){ box.innerHTML = '<p class="empty">국어·수학·영어·사회·과학 성적을 입력하면 추이가 나타납니다.</p>'; return; }
+  const pts = keys.map(k => ({k, g: weightedGrade(v.filter(r => r.y+"-"+r.t === k))}));
+  const W = 480, H = 190, L = 30, R = 16, T = 14, B = 28;
+  const max = S.profile.scale;
+  const x = i => keys.length === 1 ? L + (W-L-R)/2 : L + i*(W-L-R)/(keys.length-1);
+  const y = g => T + (g-1)*(H-T-B)/(max-1);
+  const s = svgEl(W,H);
+  s.setAttribute("aria-label","학기별 반영등급 추이");
+  for(let g=1; g<=max; g++){
+    s.appendChild(mk("line",{x1:L, x2:W-R, y1:y(g), y2:y(g), stroke:"var(--rule)", "stroke-width":1}));
+    s.appendChild(mk("text",Object.assign({},TXT,{x:L-7, y:y(g)+3.5, fill:"var(--faint)", "text-anchor":"end"}), g));
+  }
+  const d = pts.map((p,i) => (i?"L":"M")+x(i)+" "+y(p.g)).join(" ");
+  s.appendChild(mk("path",{d, fill:"none", stroke:"var(--fit)", "stroke-width":2, "stroke-linejoin":"round"}));
+  pts.forEach((p,i) => {
+    const last = i === pts.length-1;
+    s.appendChild(mk("circle",{cx:x(i), cy:y(p.g), r:last?5:4, fill:last?"var(--fit)":"var(--surface)",
+      stroke:"var(--fit)", "stroke-width":2}));
+    s.appendChild(mk("text",Object.assign({},TXT,{x:x(i), y:H-9, fill:"var(--muted)","text-anchor":"middle"}), p.k));
+    const ttl = mk("title",{},p.k+" · "+fmt(p.g)+"등급"); s.lastChild.appendChild(ttl);
+  });
+  const lastP = pts[pts.length-1];
+  s.appendChild(mk("text",Object.assign({},TXT,{x:x(pts.length-1), y:y(lastP.g)-11, fill:"var(--ink)",
+    "text-anchor":"middle","font-weight":"600","font-size":"11.5"}), fmt(lastP.g)));
+  box.appendChild(s);
+}
+
+function renderSubjBar(){
+  const box = $("#chart-subj"); box.innerHTML = "";
+  const v = validRows();
+  const groups = SUBJECTS.map(g => {
+    const rs = v.filter(r => r.g === g);
+    return {g, avg: weightedGrade(rs), units: rs.reduce((a,r)=>a+(+r.u||0),0)};
+  }).filter(x => x.avg != null);
+  if(!groups.length){ box.innerHTML = '<p class="empty">과목을 입력하면 교과별 평균이 나타납니다.</p>'; return; }
+  const max = S.profile.scale;
+  const rowH = 26, W = 480, L = 52, R = 44, T = 6;
+  const H = T + groups.length*rowH + 6;
+  const s = svgEl(W,H);
+  s.setAttribute("aria-label","교과별 평균등급");
+  groups.forEach((x,i) => {
+    const yy = T + i*rowH;
+    const w = (x.avg/max)*(W-L-R);
+    s.appendChild(mk("text",Object.assign({},{"font-family":"IBM Plex Sans KR, sans-serif","font-size":"11.5"},
+      {x:L-8, y:yy+15, fill:"var(--ink-2)","text-anchor":"end"}), x.g));
+    s.appendChild(mk("rect",{x:L, y:yy+4, width:Math.max(w,2), height:14, rx:3, fill:"var(--fit)", opacity:.82}));
+    s.lastChild.appendChild(mk("title",{}, x.g+" 평균 "+fmt(x.avg)+"등급 · "+x.units+"단위"));
+    s.appendChild(mk("text",Object.assign({},TXT,{x:L+Math.max(w,2)+7, y:yy+15, fill:"var(--ink)","font-weight":"600"}),
+      fmt(x.avg,2)));
+    s.appendChild(mk("text",Object.assign({},TXT,{x:W-2, y:yy+15, fill:"var(--faint)","text-anchor":"end","font-size":"9.5"}),
+      "("+x.units+")"));
+  });
+  box.appendChild(s);
+}
+
+function renderMockChart(){
+  const box = $("#chart-mock"); box.innerHTML = "";
+  const lg = $("#legend-mock"); lg.innerHTML = "";
+  const rows = S.mock.filter(m => m.round).slice().sort((a,b) => a.round < b.round ? -1 : 1);
+  const series = AREAS.filter(a => a !== "영어")
+    .map(a => ({a, pts: rows.map((m,i) => ({i, round:m.round, v: areaPct(m,a)})).filter(p => p.v != null)}))
+    .filter(s2 => s2.pts.length);
+  if(!series.length || rows.length < 1){
+    box.innerHTML = '<p class="empty">모의고사 백분위를 입력하면 영역별 추이가 나타납니다.</p>'; return;
+  }
+  const W = 760, H = 250, L = 34, R = 58, T = 14, B = 30;
+  const x = i => rows.length === 1 ? L + (W-L-R)/2 : L + i*(W-L-R)/(rows.length-1);
+  const y = v => T + (100-v)*(H-T-B)/100;
+  const s = svgEl(W,H);
+  s.setAttribute("aria-label","영역별 백분위 추이");
+  [0,25,50,75,100].forEach(g => {
+    s.appendChild(mk("line",{x1:L, x2:W-R, y1:y(g), y2:y(g), stroke:"var(--rule)","stroke-width":1}));
+    s.appendChild(mk("text",Object.assign({},TXT,{x:L-7, y:y(g)+3.5, fill:"var(--faint)","text-anchor":"end"}), g));
+  });
+  rows.forEach((m,i) => s.appendChild(mk("text",Object.assign({},TXT,
+    {x:x(i), y:H-10, fill:"var(--muted)","text-anchor":"middle"}), m.round)));
+  series.forEach(sr => {
+    const col = AREA_COLOR[sr.a];
+    const d = sr.pts.map((p,i) => (i?"L":"M")+x(p.i)+" "+y(p.v)).join(" ");
+    s.appendChild(mk("path",{d, fill:"none", stroke:col, "stroke-width":2, "stroke-linejoin":"round"}));
+    sr.pts.forEach(p => {
+      const c = mk("circle",{cx:x(p.i), cy:y(p.v), r:4, fill:"var(--surface)", stroke:col, "stroke-width":2});
+      c.appendChild(mk("title",{}, sr.a+" "+p.round+" · 백분위 "+p.v));
+      s.appendChild(c);
+    });
+    const last = sr.pts[sr.pts.length-1];
+    s.appendChild(mk("circle",{cx:x(last.i), cy:y(last.v), r:4.5, fill:col, stroke:"var(--surface)","stroke-width":2}));
+    s.appendChild(mk("text",Object.assign({},{"font-family":"IBM Plex Sans KR, sans-serif","font-size":"11.5","font-weight":"500"},
+      {x:x(last.i)+10, y:y(last.v)+4, fill:col}), sr.a+" "+last.v));
+    lg.insertAdjacentHTML("beforeend",
+      '<span><i style="background:'+col+'"></i>'+sr.a+'</span>');
+  });
+  const eng = rows.map(m => areaGrade(m,"영어")).filter(g => g != null);
+  if(eng.length) lg.insertAdjacentHTML("beforeend",
+    '<span style="color:var(--faint)">영어는 절대평가라 등급만 입력 — 최근 '+eng[eng.length-1]+'등급</span>');
+  box.appendChild(s);
+}
+
+/* ══════════════ 지원 후보 ══════════════ */
+function renderPicker(){
+  const sel = $("#pick-dept");
+  if(sel.options.length) return;
+  const byUniv = {};
+  CAT.forEach(c => { (byUniv[c[0]] = byUniv[c[0]] || []).push(c); });
+  Object.keys(byUniv).sort((a,b)=>a.localeCompare(b,"ko")).forEach(u => {
+    const og = el("optgroup"); og.label = u + " [" + byUniv[u][0][1] + "]";
+    byUniv[u].forEach(c => {
+      const o = el("option", null, c[2] + (c[4] === "있음" ? " · 실기" : c[6] === "예" ? " · 교과100" : ""));
+      o.value = CAT.indexOf(c); og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+}
+function renderTargets(){
+  const list = $("#target-list"); list.innerHTML = "";
+  $("#cnt-target").textContent = S.targets.length ? S.targets.length : "";
+  const susi = S.targets.filter(t => t.type.startsWith("수시")).length;
+  const jeongsi = S.targets.filter(t => t.type === "정시").length;
+  const sil = S.targets.filter(t => +t.ratio.sil > 0).length;
+  $("#target-stats").innerHTML =
+    stat("수시 카드", susi + " / 6", susi > 6 ? "지원 한도 초과" : "6회 지원 한도") +
+    stat("정시 후보", jeongsi, "가·나·다군") +
+    stat("실기 반영", sil, "전형 수") +
+    stat("전형 자료 입력", S.targets.filter(t => lastPrev(t)).length + " / " + S.targets.length, "과년도 결과 있음");
+
+  if(!S.targets.length){
+    list.innerHTML = '<div class="sheet"><p class="empty">아직 후보가 없습니다. 위에서 학과를 골라 추가해 보세요.</p></div>';
+    return;
+  }
+  S.targets.forEach(t => list.appendChild(targetCard(t)));
+}
+
+function targetCard(t){
+  const d = el("details","tgt");
+  const sum = el("summary");
+  const jr = judgeTarget(t);
+  sum.innerHTML = '<span style="flex:1 1 auto">'+esc(t.univ||"대학 미입력")+
+    ' <span style="color:var(--muted);font-weight:400">'+esc(t.dept||"학과 미입력")+'</span></span>'+
+    '<span class="chip plain">'+esc(t.type)+'</span>'+
+    (jr.j ? '<span class="chip j-'+jr.j.k+'">'+jr.j.label+'</span>' : '<span class="chip plain">자료 대기</span>');
+  d.appendChild(sum);
+
+  const body = el("div","body");
+  const F = (label, node, flex) => { const l = el("label","field"); l.style.flex = flex||"1 1 130px";
+    l.appendChild(el("span",null,label)); l.appendChild(node); return l; };
+  const inp = (val, type, on, step) => { const i = el("input"); i.type = type||"text";
+    if(step) i.step = step; i.value = val == null ? "" : val;
+    i.oninput = () => on(i.value); i.onchange = () => renderAll(); return i; };
+
+  // 기본
+  const r1 = el("div","row");
+  r1.appendChild(F("대학명", inp(t.univ,"text",v=>{t.univ=v;persist();})));
+  r1.appendChild(F("학과 · 모집단위", inp(t.dept,"text",v=>{t.dept=v;persist();}), "2 1 180px"));
+  r1.appendChild(F("전형명", inp(t.name,"text",v=>{t.name=v;persist();}), "1 1 150px"));
+  const ts = el("select"); TYPES.forEach(x=>{const o=el("option",null,x);o.value=x;ts.appendChild(o);});
+  ts.value = t.type; ts.onchange = () => { t.type = ts.value; commit(); };
+  r1.appendChild(F("구분", ts, "0 1 130px"));
+  body.appendChild(r1);
+
+  // 반영비율
+  const fs1 = el("fieldset"); fs1.appendChild(el("legend",null,"전형요소 반영비율 (%)"));
+  const g1 = el("div","grid tight");
+  [["교과","gyo"],["수능","sun"],["실기","sil"],["면접","my"]].forEach(([lab,k]) => {
+    g1.appendChild(F(lab, inp(t.ratio[k],"number",v=>{t.ratio[k]= v===""?0:+v; persist();},"1"), "1 1 80px"));
+  });
+  fs1.appendChild(g1);
+  const tot = ["gyo","sun","sil","my"].reduce((a,k)=>a+(+t.ratio[k]||0),0);
+  const warn = el("p","hint");
+  warn.style.marginTop = "8px";
+  warn.textContent = tot === 100 ? "합계 100%" : "합계 " + tot + "% — 100이 아니어도 비율대로 환산하지만, 모집요강 값과 맞는지 확인하세요.";
+  if(tot !== 100) warn.style.color = "var(--reach)";
+  fs1.appendChild(warn);
+  if(+t.ratio.sil > 0 || +t.ratio.my > 0){
+    const g2 = el("div","row"); g2.style.marginTop = "10px";
+    if(+t.ratio.sil > 0) g2.appendChild(F("실기 예상 득점률 (%)", inp(t.silgi,"number",v=>{t.silgi = v===""?0:+v;persist();},"1"), "1 1 150px"));
+    if(+t.ratio.my > 0) g2.appendChild(F("면접 예상 득점률 (%)", inp(t.my,"number",v=>{t.my = v===""?0:+v;persist();},"1"), "1 1 150px"));
+    fs1.appendChild(g2);
+  }
+  body.appendChild(fs1);
+
+  // 교과 반영
+  if(+t.ratio.gyo > 0){
+    const fs2 = el("fieldset"); fs2.appendChild(el("legend",null,"교과 반영 방법"));
+    const ch = el("div","checks");
+    SUBJECTS.forEach(sname => {
+      const l = el("label"); const c = el("input"); c.type = "checkbox"; c.checked = t.subjects.includes(sname);
+      c.id = "sub-"+t.id+"-"+sname;
+      c.onchange = () => { t.subjects = c.checked ? t.subjects.concat([sname]) : t.subjects.filter(x=>x!==sname); commit(); };
+      l.appendChild(c); l.appendChild(el("span",null,sname)); ch.appendChild(l);
+    });
+    fs2.appendChild(ch);
+    const wr = el("div","row"); wr.style.marginTop = "12px";
+    [1,2,3].forEach(y => wr.appendChild(F(y+"학년 가중치",
+      inp(t.weights[y],"number",v=>{t.weights[y]= v===""?1:+v; persist();},"0.1"), "0 1 100px")));
+    fs2.appendChild(wr);
+    const tbl = gradeTable(t);
+    const tr = el("div","row"); tr.style.marginTop = "12px";
+    tbl.forEach((sc,i) => {
+      tr.appendChild(F((i+1)+"등급", inp(sc,"number",v=>{
+        const arr = gradeTable(t).slice(); arr[i] = v===""?0:+v; t.table = arr; persist();
+      },"0.1"), "0 1 76px"));
+    });
+    fs2.appendChild(el("p","hint","등급별 환산점수 — 모집요강의 표를 그대로 옮겨 적으세요."));
+    fs2.appendChild(tr);
+    body.appendChild(fs2);
+  }
+
+  // 수능 반영
+  if(+t.ratio.sun > 0){
+    const fs3 = el("fieldset"); fs3.appendChild(el("legend",null,"수능 영역별 반영비율 (%)"));
+    const g3 = el("div","grid tight");
+    AREAS.forEach(a => g3.appendChild(F(a, inp(t.sunRatio[a],"number",v=>{t.sunRatio[a]= v===""?0:+v; persist();},"1"), "1 1 80px")));
+    fs3.appendChild(g3);
+    fs3.appendChild(el("p","hint","영어 등급별 점수 (1→9등급)"));
+    const g4 = el("div","row"); g4.style.marginTop = "6px";
+    t.engTable.forEach((sc,i) => g4.appendChild(F((i+1), inp(sc,"number",v=>{ t.engTable[i] = v===""?0:+v; persist(); },"1"), "0 1 62px")));
+    fs3.appendChild(g4);
+    body.appendChild(fs3);
+  }
+
+  // 최저
+  const fs4 = el("fieldset"); fs4.appendChild(el("legend",null,"수능 최저학력기준"));
+  const cr = el("div","row");
+  const cb = el("input"); cb.type = "checkbox"; cb.checked = !!t.choejeo.on; cb.id = "cj-"+t.id;
+  cb.onchange = () => { t.choejeo.on = cb.checked; commit(); };
+  const cl = el("label","field"); cl.style.flex = "0 0 auto";
+  cl.appendChild(el("span",null,"적용")); cl.appendChild(cb);
+  cr.appendChild(cl);
+  cr.appendChild(F("상위 몇 개 영역", inp(t.choejeo.n,"number",v=>{t.choejeo.n = v===""?2:+v; persist();},"1"), "0 1 130px"));
+  cr.appendChild(F("등급합 이하", inp(t.choejeo.sum,"number",v=>{t.choejeo.sum = v===""?6:+v; persist();},"1"), "0 1 120px"));
+  fs4.appendChild(cr);
+  body.appendChild(fs4);
+
+  // 과년도 결과
+  const fs5 = el("fieldset"); fs5.appendChild(el("legend",null,"과년도 입시결과"));
+  (t.prev||[]).forEach((p, idx) => {
+    const pr = el("div","row"); pr.style.marginBottom = "10px";
+    pr.appendChild(F("학년도", inp(p.y,"number",v=>{p.y = v===""?null:+v; persist();},"1"), "0 1 92px"));
+    const bs = el("select"); ["등급","점수"].forEach(x=>{const o=el("option",null,x+" 기준");o.value=x;bs.appendChild(o);});
+    bs.value = p.basis || "등급"; bs.onchange = () => { p.basis = bs.value; commit(); };
+    pr.appendChild(F("공개 형식", bs, "0 1 120px"));
+    pr.appendChild(F("70%컷", inp(p.c70,"number",v=>{p.c70 = v===""?null:+v; persist();},"0.01"), "0 1 96px"));
+    pr.appendChild(F("50%컷", inp(p.c50,"number",v=>{p.c50 = v===""?null:+v; persist();},"0.01"), "0 1 96px"));
+    pr.appendChild(F("경쟁률", inp(p.rate,"number",v=>{p.rate = v===""?null:+v; persist();},"0.1"), "0 1 92px"));
+    pr.appendChild(F("충원율 %", inp(p.fill,"number",v=>{p.fill = v===""?null:+v; persist();},"1"), "0 1 96px"));
+    const del = el("button","btn ghost tiny","✕"); del.onclick = () => { t.prev.splice(idx,1); commit(); };
+    pr.appendChild(del);
+    fs5.appendChild(pr);
+  });
+  const addPrev = el("button","btn ghost tiny","+ 연도 추가");
+  addPrev.onclick = () => { t.prev = (t.prev||[]).concat([{y:(S.profile.year||2028)-1, basis:"등급", c70:null, c50:null, rate:null, fill:null}]); commit(); };
+  fs5.appendChild(addPrev);
+  body.appendChild(fs5);
+
+  // 계산 결과 + 메모
+  const res = el("div","stats");
+  res.innerHTML =
+    stat("반영등급", fmt(reflectGrade(t)), "가중평균") +
+    stat("교과 환산", fmt(gyoScore(t),1), "100점 만점") +
+    stat("수능 환산", fmt(sunScore(t),1), "최근 모의고사") +
+    stat("최종 환산", fmt(finalScore(t),1), "비율 가중");
+  body.appendChild(res);
+
+  const memo = el("textarea"); memo.value = t.memo||""; memo.placeholder = "모집요강에서 확인한 사항, 실기 종목, 면접 형식 등";
+  memo.id = "memo-"+t.id;
+  memo.oninput = () => { t.memo = memo.value; persist(); };
+  const ml = el("label","field"); ml.style.marginTop = "14px";
+  ml.appendChild(el("span",null,"메모")); ml.appendChild(memo);
+  body.appendChild(ml);
+
+  const rm = el("button","btn danger tiny","이 후보 삭제"); rm.style.marginTop = "14px";
+  rm.onclick = () => { if(confirm(t.univ+" "+t.dept+" 후보를 삭제할까요?")){ S.targets = S.targets.filter(x=>x.id!==t.id); commit(); } };
+  body.appendChild(rm);
+
+  d.appendChild(body);
+  return d;
+}
+
+/* ══════════════ 내 위치 ══════════════ */
+function renderPosition(){
+  const list = $("#pos-list"); list.innerHTML = "";
+  const rows = S.targets.map(t => Object.assign({t}, judgeTarget(t)));
+  const counts = {ok:0, fit:0, reach:0, far:0, none:0};
+  rows.forEach(r => { if(r.j) counts[r.j.k]++; else counts.none++; });
+  $("#pos-stats").innerHTML =
+    stat("안정", counts.ok, "70%컷 여유 있음") +
+    stat("적정", counts.fit, "70%컷 근처") +
+    stat("소신", counts.reach, "조금 모자람") +
+    stat("도전", counts.far, "큰 차이 또는 최저 미충족");
+
+  const mode = $("#sort-pos").value;
+  rows.sort((a,b) => {
+    if(mode === "name") return (a.t.univ||"").localeCompare(b.t.univ||"","ko");
+    if(mode === "type") return TYPES.indexOf(a.t.type) - TYPES.indexOf(b.t.type);
+    const am = a.margin == null ? -999 : a.margin, bm = b.margin == null ? -999 : b.margin;
+    return bm - am;
+  });
+
+  if(!rows.length){
+    list.innerHTML = '<div class="sheet"><p class="empty">지원 후보를 등록하면 여기에 위치가 표시됩니다.</p></div>';
+    return;
+  }
+  rows.forEach(r => list.appendChild(laneCard(r)));
+}
+
+function laneCard(r){
+  const t = r.t, j = r.j;
+  const card = el("div","lane-card" + (j ? " is-"+j.k : ""));
+  const head = el("div","lane-head");
+  head.innerHTML =
+    '<div><div class="title">'+esc(t.univ||"대학 미입력")+' · '+esc(t.dept||"학과")+'</div>'+
+    '<div class="meta">'+esc(t.type)+(t.name?' · '+esc(t.name):'')+
+    (t.region?' · '+esc(t.region):'')+'</div></div>' +
+    (j ? '<span class="chip j-'+j.k+'">'+j.label+'</span>' : '<span class="chip plain">과년도 결과 미입력</span>');
+  card.appendChild(head);
+
+  if(!r.prev || r.mine == null){
+    const p = el("p","note"); p.style.marginTop = "10px";
+    p.textContent = !r.prev
+      ? "이 전형의 과년도 70%컷을 넣으면 합격선 대비 위치가 그려집니다."
+      : "성적이나 반영 설정이 비어 있어 아직 환산점수를 낼 수 없습니다.";
+    card.appendChild(p);
+    if(r.cj) card.appendChild(choejeoBar(r.cj));
+    return card;
+  }
+
+  const basis = r.basis, cut = +r.prev.c70, cut50 = r.prev.c50;
+  const base = basis === "등급" ? 1.4 : 12;
+  const span = Math.max(base, Math.abs(r.mine - cut) * 1.3);
+  // 오른쪽이 유리한 방향
+  const pos = v => basis === "등급"
+    ? clamp01(((cut + span) - v) / (span*2))
+    : clamp01((v - (cut - span)) / (span*2));
+  const lane = el("div","lane");
+  lane.innerHTML = '<div class="lane-track"></div>';
+  const fill = el("div","lane-fill");
+  const myX = pos(r.mine), cutX = pos(cut);
+  fill.style.left = (Math.min(myX,cutX)*100)+"%";
+  fill.style.width = (Math.abs(myX-cutX)*100)+"%";
+  fill.style.background = "var(--"+(j?j.k==="ok"?"ok":j.k==="fit"?"fit":j.k==="reach"?"reach":"far":"fit")+")";
+  lane.appendChild(fill);
+
+  const cutEl = el("div","lane-cut");
+  cutEl.style.left = (cutX*100)+"%";
+  cutEl.innerHTML = '<b>70%컷 '+fmt(cut, basis==="등급"?2:1)+'</b>';
+  lane.appendChild(cutEl);
+
+  if(cut50 != null && cut50 !== ""){
+    const c2 = el("div","lane-cut soft");
+    c2.style.left = (pos(+cut50)*100)+"%";
+    c2.innerHTML = '<b style="top:-13px">50% '+fmt(+cut50, basis==="등급"?2:1)+'</b>';
+    lane.appendChild(c2);
+  }
+
+  const me = el("div","lane-me");
+  me.style.left = (myX*100)+"%";
+  me.style.background = "var(--ink)";
+  me.innerHTML = '<span>나 '+fmt(r.mine, basis==="등급"?2:1)+'</span>';
+  me.title = "내 " + (basis==="등급" ? "반영등급 " : "환산점수 ") + fmt(r.mine,2);
+  lane.appendChild(me);
+  card.appendChild(lane);
+
+  const sc = el("div","lane-scale");
+  sc.innerHTML = basis === "등급"
+    ? '<span>'+fmt(cut+span,1)+'등급 (불리)</span><span>'+fmt(Math.max(1,cut-span),1)+'등급 (유리)</span>'
+    : '<span>'+fmt(cut-span,0)+'점</span><span>'+fmt(cut+span,0)+'점</span>';
+  card.appendChild(sc);
+
+  const foot = el("div","lane-foot");
+  const unit = basis === "등급" ? "등급" : "점";
+  foot.innerHTML =
+    '<span>여유 <b>'+(r.margin>=0?"+":"")+fmt(r.margin,2)+unit+'</b></span>' +
+    '<span>내 '+(basis==="등급"?"반영등급":"환산점수")+' <b>'+fmt(r.mine,2)+'</b></span>' +
+    (r.prev.rate ? '<span>작년 경쟁률 <b>'+fmt(r.prev.rate,1)+':1</b></span>' : '') +
+    (r.prev.fill != null && r.prev.fill !== "" ? '<span>충원율 <b>'+fmt(r.prev.fill,0)+'%</b></span>' : '') +
+    '<span class="hint">'+r.prev.y+'학년도 기준</span>';
+  card.appendChild(foot);
+
+  if(r.prev.fill != null && +r.prev.fill >= 100 && j && (j.k === "reach" || j.k === "far")){
+    const b = el("div","warnbar mild");
+    b.textContent = "충원율 "+fmt(+r.prev.fill,0)+"% — 추가합격이 많이 돌던 전형입니다. 실제 최종 합격선은 70%컷보다 낮아질 수 있습니다.";
+    card.appendChild(b);
+  }
+  if(r.cj) card.appendChild(choejeoBar(r.cj));
+  return card;
+}
+function choejeoBar(cj){
+  const b = el("div", cj.ok === false ? "warnbar" : "warnbar mild");
+  if(cj.ok === false) b.textContent = "수능 최저 미충족 — 상위 "+cj.n+"개 영역 등급합 "+cj.sum+", 기준 "+cj.need+" 이하. "+cj.short+"등급 더 필요합니다.";
+  else if(cj.ok === true){ b.className = "warnbar mild"; b.style.background = "var(--ok-bg)"; b.style.color = "var(--ok)";
+    b.style.borderColor = "color-mix(in srgb,var(--ok) 24%,transparent)";
+    b.textContent = "수능 최저 충족 — 상위 "+cj.n+"개 등급합 "+cj.sum+" (기준 "+cj.need+" 이하)"; }
+  else b.textContent = "수능 최저 기준이 있지만 모의고사 등급이 없어 판정할 수 없습니다.";
+  return b;
+}
+const clamp01 = v => Math.max(0.02, Math.min(0.98, v));
+
+/* ══════════════ 전략 ══════════════ */
+function renderLevers(){
+  const box = $("#levers"); box.innerHTML = "";
+  const ts = S.targets.filter(t => finalScore(t) != null);
+  if(!ts.length){
+    box.innerHTML = '<p class="empty">성적과 지원 후보를 넣으면 우선순위가 계산됩니다.</p>'; return;
+  }
+  const levers = [];
+
+  // 1) 내신 교과군별: 다음 학기에 해당 교과를 1등급 올릴 때
+  const v = validRows();
+  const semesters = new Set(v.map(r => r.y+"-"+r.t)).size || 1;
+  SUBJECTS.forEach(g => {
+    const rs = v.filter(r => r.g === g);
+    if(!rs.length) return;
+    const unitPerTerm = rs.reduce((a,r)=>a+(+r.u||0),0) / semesters;
+    let gain = 0, used = 0, avgNow = weightedGrade(rs);
+    ts.forEach(t => {
+      if(!t.subjects.includes(g) || !(+t.ratio.gyo > 0)) return;
+      const rows = rowsFor(t);
+      const den = rows.reduce((a,r)=>a+(+r.u||0)*(+t.weights[r.y]||1), 0);
+      if(!den) return;
+      const tbl = gradeTable(t);
+      // 1등급 개선 시 등급점수 평균 증가폭(현재 평균 등급 구간 기준)
+      const gi = Math.min(Math.max(Math.round(avgNow),1), tbl.length);
+      const step = gi > 1 ? tbl[gi-2] - tbl[gi-1] : tbl[0] - tbl[1];
+      const addUnits = unitPerTerm * (+t.weights[3] || 1);
+      gain += (step * addUnits / (den + addUnits)) * (+t.ratio.gyo/100);
+      used++;
+    });
+    if(used && gain > 0.01) levers.push({
+      what:"내신 "+g, gain: gain/ts.length, n:used,
+      why:"현재 "+fmt(avgNow)+"등급 · 다음 학기 약 "+fmt(unitPerTerm,1)+"단위 · "+used+"개 전형이 반영"
+    });
+  });
+
+  // 2) 수능 영역별: 백분위 +5
+  const m = latestMock();
+  AREAS.forEach(a => {
+    let gain = 0, used = 0;
+    ts.forEach(t => {
+      const w = +t.sunRatio[a] || 0, rs = +t.ratio.sun || 0;
+      if(!w || !rs) return;
+      const den = AREAS.reduce((s2,x)=>s2+(+t.sunRatio[x]||0),0) || 1;
+      if(a === "영어"){
+        const g = m ? areaGrade(m,"영어") : null;
+        if(!g || g <= 1) return;
+        const step = t.engTable[g-2] - t.engTable[g-1];
+        gain += step * (w/den) * (rs/100);
+      } else {
+        gain += 5 * (w/den) * (rs/100);
+      }
+      used++;
+    });
+    if(used && gain > 0.01) levers.push({
+      what:"수능 "+a, gain: gain/ts.length, n:used,
+      why: a === "영어" ? "1등급 상승 기준 · "+used+"개 전형이 반영"
+                        : "백분위 +5 기준 · "+used+"개 전형이 반영"
+    });
+  });
+
+  // 3) 실기 / 면접
+  [["실기","sil","silgi"],["면접","my","my"]].forEach(([lab,rk,vk]) => {
+    let gain = 0, used = 0;
+    ts.forEach(t => {
+      const w = +t.ratio[rk] || 0; if(!w) return;
+      const den = ["gyo","sun","sil","my"].reduce((s2,k)=>s2+(+t.ratio[k]||0),0) || 1;
+      gain += 5 * (w/den); used++;
+    });
+    if(used && gain > 0.01) levers.push({
+      what: lab+" 준비", gain: gain/ts.length, n:used,
+      why:"득점률 +5%p 기준 · "+used+"개 전형이 반영"
+    });
+  });
+
+  // 4) 최저 미충족은 최우선
+  const fails = S.targets.filter(t => { const c = checkChoejeo(t); return c && c.ok === false; });
+
+  levers.sort((a,b) => b.gain - a.gain);
+
+  if(fails.length){
+    const top = el("div","warnbar");
+    top.style.marginBottom = "14px";
+    top.textContent = "최우선: 수능 최저 미충족 " + fails.length + "개 전형 (" +
+      fails.map(t => (t.univ||"?")+" "+(t.dept||"")).join(", ") + "). 최저를 못 맞추면 아래 점수는 의미가 없습니다.";
+    box.appendChild(top);
+  }
+  if(!levers.length){
+    box.appendChild(el("p","empty","반영비율이 입력된 전형이 아직 없어 계산할 항목이 없습니다."));
+    return;
+  }
+  levers.slice(0,8).forEach((l,i) => {
+    const row = el("div","lever");
+    row.innerHTML =
+      '<span class="rank">'+(i+1)+'</span>'+
+      '<span><span class="what">'+esc(l.what)+'</span><br><span class="why">'+esc(l.why)+'</span></span>'+
+      '<span class="gain">+'+fmt(l.gain,2)+'<small>환산점수 평균</small></span>';
+    box.appendChild(row);
+  });
+  const foot = el("p","hint"); foot.style.marginTop = "12px";
+  foot.textContent = "후보 " + ts.length + "개 전형에 대한 평균 상승폭입니다. 같은 노력이라면 위쪽부터가 이득이 큽니다.";
+  box.appendChild(foot);
+}
+
+function renderChoejeo(){
+  const tb = $("#choejeo-body"); tb.innerHTML = "";
+  const list = S.targets.filter(t => t.choejeo && t.choejeo.on);
+  if(!list.length){
+    tb.innerHTML = '<tr><td colspan="5" class="empty">최저학력기준을 적용한 전형이 없습니다. 전형 카드에서 “적용”을 켜 주세요.</td></tr>';
+    return;
+  }
+  const m = latestMock();
+  list.forEach(t => {
+    const c = checkChoejeo(t);
+    const tr = el("tr");
+    let fix = "—";
+    if(c && c.ok === false && m){
+      // 가장 가까운 개선: 등급이 가장 낮은(숫자 큰) 상위후보 영역
+      const gs = AREAS.map(a => ({a, g: areaGrade(m,a)})).filter(x => x.g != null).sort((x,y)=>x.g-y.g);
+      const inSet = gs.slice(0, c.n);
+      const best = inSet[inSet.length-1];
+      fix = best ? best.a + " " + best.g + "등급 → " + Math.max(1, best.g - c.short) + "등급" : "—";
+    } else if(c && c.ok === true) fix = "충족 — 유지";
+    tr.innerHTML =
+      '<td>'+esc(t.univ||"?")+' · '+esc(t.dept||"")+'</td>'+
+      '<td>상위 '+c.n+'개 등급합 '+c.need+' 이하</td>'+
+      '<td class="n num">'+(c.sum == null ? "—" : c.sum)+'</td>'+
+      '<td>'+(c.ok == null ? '<span class="chip plain">판정 불가</span>'
+             : c.ok ? '<span class="chip j-ok">충족</span>' : '<span class="chip j-far">미충족</span>')+'</td>'+
+      '<td>'+esc(fix)+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function renderTasks(){
+  const box = $("#task-list"); box.innerHTML = "";
+  if(!S.tasks.length){ box.innerHTML = '<p class="empty">할 일을 추가해 보세요.</p>'; return; }
+  S.tasks.forEach(t => {
+    const row = el("div","todo"+(t.done?" done":""));
+    const c = el("input"); c.type = "checkbox"; c.checked = !!t.done; c.id = "task-"+t.id;
+    c.onchange = () => { t.done = c.checked; commit(); };
+    const w = el("div","t");
+    const i = el("input"); i.type = "text"; i.value = t.text||""; i.id = "taskt-"+t.id;
+    i.style.border = "1px solid transparent"; i.style.background = "transparent";
+    i.oninput = () => { t.text = i.value; persist(); };
+    w.appendChild(i);
+    const d = el("button","btn ghost tiny","✕");
+    d.onclick = () => { S.tasks = S.tasks.filter(x=>x.id!==t.id); commit(); };
+    row.appendChild(c); row.appendChild(w); row.appendChild(d);
+    box.appendChild(row);
+  });
+}
+
+/* ══════════════ 배너 ══════════════ */
+function renderBanner(){
+  const slot = $("#banner-slot"); slot.innerHTML = "";
+  if(!S.isExample) return;
+  const b = el("div","banner");
+  b.innerHTML = '<span><strong>예시 데이터로 보고 있습니다.</strong> 아래 값은 실제 성적이 아닙니다 — 화면이 어떻게 동작하는지 보여주기 위한 표본입니다.</span>';
+  const btn = el("button","btn","지우고 내 성적 넣기");
+  btn.onclick = () => { if(confirm("예시 데이터를 모두 지우고 빈 상태로 시작할까요?")){ S = blankState(); commit(); } };
+  b.appendChild(btn);
+  slot.appendChild(b);
+}
+
+/* ══════════════ 전체 렌더 ══════════════ */
+let rendering = false;
+function renderAll(){
+  if(rendering) return; rendering = true;
+  try{
+    $("#f-name").value = S.profile.name || "";
+    $("#f-year").value = S.profile.year || "";
+    $("#f-scale").value = String(S.profile.scale || 5);
+    $("#f-sd").value = S.profile.sd || "";
+    $("#f-su").value = S.profile.su || "";
+    renderBanner();
+    renderDdays();
+    renderNaesin();
+    renderMock();
+    renderTrend();
+    renderSubjBar();
+    renderMockChart();
+    renderPicker();
+    renderTargets();
+    renderPosition();
+    renderLevers();
+    renderChoejeo();
+    renderTasks();
+  } finally { rendering = false; }
+}
+
+/* ══════════════ 이벤트 ══════════════ */
+function bind(){
+  document.querySelectorAll("#tabs button").forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+      document.querySelectorAll(".panel").forEach(p => { p.hidden = p.id !== b.getAttribute("aria-controls"); });
+      window.scrollTo({top:0, behavior:"smooth"});
+    };
+  });
+  const pf = (id, key, num) => {
+    const e = $(id);
+    e.oninput = () => { S.profile[key] = num ? (e.value === "" ? null : +e.value) : e.value; persist(); };
+    e.onchange = () => renderAll();
+  };
+  pf("#f-name","name"); pf("#f-year","year",true); pf("#f-sd","sd"); pf("#f-su","su");
+  $("#f-scale").onchange = () => { S.profile.scale = +$("#f-scale").value; S.targets.forEach(t => t.table = null); commit(); };
+
+  $("#add-term").onclick = () => {
+    const used = new Set(S.naesin.map(r => r.y+"-"+r.t));
+    let y = 1, t = 1;
+    outer: for(y=1; y<=3; y++) for(t=1; t<=2; t++) if(!used.has(y+"-"+t)) break outer;
+    if(y > 3){ y = 3; t = 2; }
+    CORE.forEach(g => S.naesin.push({id:uid(), y, t, g, n:"", u:4, r:null}));
+    commit();
+  };
+  $("#add-subj").onclick = () => {
+    const last = S.naesin[S.naesin.length-1];
+    S.naesin.push({id:uid(), y:last?last.y:1, t:last?last.t:1, g:"국어", n:"", u:4, r:null});
+    commit();
+  };
+  $("#add-mock").onclick = () => {
+    const d = new Date(); const r = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    S.mock.push({id:uid(), round:r, 국어:{}, 수학:{}, 영어:{}, 탐구:{}});
+    commit();
+  };
+  $("#add-target").onclick = () => {
+    const i = +$("#pick-dept").value; const c = CAT[i]; if(!c) return;
+    const silgi = c[4] === "있음";
+    const gyoOnly = c[6] === "예";
+    S.targets.push(mkTarget({
+      univ:c[0], region:c[1], dept:c[2], name: c[3] === "확인 필요" ? "" : c[3],
+      type: silgi ? "수시 · 실기" : "수시 · 교과",
+      ratio: silgi ? {gyo:40, sil:60, my:0, sun:0} : {gyo:100, sil:0, my:0, sun:0},
+      memo: c[7] && c[7] !== "-" ? "실기 종목: " + c[7] : ""
+    }));
+    if(S.isExample) S.isExample = false;
+    commit();
+    document.querySelector('#tabs button[aria-controls="p-target"]').click();
+  };
+  $("#add-blank").onclick = () => { S.targets.push(mkTarget({})); if(S.isExample) S.isExample = false; commit(); };
+  $("#sort-pos").onchange = renderPosition;
+  $("#add-task").onclick = () => { S.tasks.push({id:uid(), text:"", area:"", due:"", done:false}); commit(); };
+
+  $("#export-json").onclick = async () => {
+    const body = JSON.stringify(S, null, 2);
+    const name = (S.profile.name || "입시") + "_전략판_" + new Date().toISOString().slice(0,10) + ".json";
+    let dl = null;
+    try{ dl = await claude.use("downloads"); }catch(e){}
+    if(!dl){ alert("이 화면에서는 파일 저장을 쓸 수 없습니다. 저장된 내용은 그대로 유지됩니다."); return; }
+    try{ await dl.save({filename:name, data:body}); }
+    catch(err){ if(err && err.code !== "declined") alert("저장하지 못했습니다: " + (err && err.message || "알 수 없는 오류")); }
+  };
+  $("#import-json").onclick = () => $("#file-json").click();
+  $("#file-json").onchange = e => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try{
+        const inc = normalize(JSON.parse(rd.result));
+        if(confirm("파일 내용으로 지금 값을 모두 바꿀까요?")){ S = inc; S.isExample = false; commit(); }
+      }catch(err){ alert("이 파일은 이 페이지가 내보낸 JSON이 아닌 것 같습니다."); }
+    };
+    rd.readAsText(f);
+    e.target.value = "";
+  };
+  $("#reset-all").onclick = () => {
+    if(confirm("입력한 성적 · 후보 · 할 일을 모두 지울까요? 되돌릴 수 없습니다.")){ S = blankState(); commit(); }
+  };
+}
+
+/* ══════════════ 부팅 ══════════════ */
+function boot(){
+  let loaded = null;
+  try{ const raw = localStorage.getItem(LS_KEY); if(raw) loaded = JSON.parse(raw); }catch(e){}
+  S = loaded ? normalize(loaded) : exampleState();
+  bind();
+  renderAll();
+  connect();
+}
+if(window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
+else boot();
+})();
+</script>
